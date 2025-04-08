@@ -1,0 +1,742 @@
+.anilibria-player-container {
+  --player-primary-color: #6366f1;
+  --player-primary-hover: #332f7f;
+  --player-primary-glow: #6366f1;
+  --player-light-bg: rgba(255, 255, 255, 0.1);
+  --player-dark-bg: rgba(0, 0, 0, 0.5);
+  --player-control-size: 48px;
+  --player-slider-height: 5px;
+  --player-slider-height-hover: 10px;
+  --player-anim-duration: 0.3s;
+  --player-glass-bg: rgba(28, 28, 30, 0.6);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.97);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.anilibria-player {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  max-height: 90vh;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(203, 98, 149, 0.15);
+  background: #000;
+  backdrop-filter: blur(10px);
+}
+
+.anilibria-player video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Custom Quality Selector */
+.anilibria-player-quality-menu {
+  position: relative;
+  margin-right: 8px;
+}
+
+.anilibria-player-quality-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--player-glass-bg);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  font-weight: 500;
+  min-width: 80px;
+  transition: all var(--player-anim-duration) ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.anilibria-player-quality-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.anilibria-player-quality-icon {
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.anilibria-player-quality-icon.active {
+  transform: rotate(180deg);
+}
+
+.anilibria-player-quality-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.anilibria-player-quality-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background-color: rgba(28, 28, 30, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  min-width: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 30;
+  transform-origin: bottom right;
+}
+
+.anilibria-player-quality-option {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.anilibria-player-quality-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.anilibria-player-quality-option.active {
+  color: var(--player-primary-color);
+  background-color: rgba(203, 98, 149, 0.1);
+}
+
+.anilibria-player-quality-option .quality-check {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.anilibria-player-quality-option .quality-check svg {
+  width: 14px;
+  height: 14px;
+}
+
+.anilibria-player-control-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--player-anim-duration) ease, transform var(--player-anim-duration) ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.anilibria-player-controls-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  gap: 15px;
+}
+
+.anilibria-player:hover .anilibria-player-control-container,
+.anilibria-player-control-container.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.anilibria-player-progress-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  position: relative;
+}
+
+.anilibria-player-control-button.close-button {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+.anilibria-player-control-button.close-button:hover {
+  background-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Progress bar with dynamic sizing */
+.anilibria-player-progress-bar {
+  flex: 1;
+  height: var(--player-slider-height);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: var(--player-slider-height);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset;
+  transition: height 0.2s ease, transform 0.2s ease;
+}
+
+.anilibria-player-progress-container:hover .anilibria-player-progress-bar,
+.anilibria-player-progress-bar.active {
+  height: var(--player-slider-height-hover);
+  transform: scale(1.02);
+}
+
+.anilibria-player-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--player-primary-color), var(--player-primary-hover));
+  border-radius: var(--player-slider-height);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px var(--player-primary-glow);
+  z-index: 2;
+}
+
+.anilibria-player-buffer-bar {
+  height: 100%;
+  width: 0%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: var(--player-slider-height);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.anilibria-player-progress-thumb {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--player-primary-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.2s ease;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.anilibria-player-progress-container:hover .anilibria-player-progress-thumb,
+.anilibria-player-progress-bar.active .anilibria-player-progress-thumb {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.anilibria-player-control-button {
+  width: var(--player-control-size);
+  height: var(--player-control-size);
+  border-radius: 50%;
+  background-color: var(--player-glass-bg);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all var(--player-anim-duration) ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.anilibria-player-control-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.anilibria-player-control-button:active {
+  transform: scale(0.95);
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+.anilibria-player-control-button svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+
+.anilibria-player-time-display {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 100px;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.anilibria-player-volume-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-right: 5px;
+}
+
+.anilibria-player-volume-slider-container {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) scaleY(0);
+  height: 0;
+  background: var(--player-glass-bg);
+  border-radius: 12px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  transform-origin: bottom;
+  opacity: 0;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.anilibria-player-volume-container:hover .anilibria-player-volume-slider-container {
+  transform: translateX(-50%) scaleY(1);
+  height: 120px;
+  opacity: 1;
+}
+
+.anilibria-player-volume-slider {
+  width: var(--player-slider-height-hover);
+  height: 100px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: var(--player-slider-height-hover);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset;
+}
+
+.anilibria-player-volume-level {
+  width: 100%;
+  background: linear-gradient(to top, var(--player-primary-color), var(--player-primary-hover));
+  border-radius: var(--player-slider-height-hover);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: height 0.1s linear;
+  box-shadow: 0 0 10px var(--player-primary-glow);
+}
+
+.anilibria-player-thumbnail-preview {
+  display: none;
+}
+
+.anilibria-player-thumbnail-preview::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid var(--player-primary-color);
+}
+
+.anilibria-player-thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Time tooltip styles */
+.anilibria-player-progress-hover-time {
+  position: absolute;
+  top: -30px;
+  transform: translateX(-50%);
+  background-color: var(--player-primary-color);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+}
+
+/* Title and controls */
+.anilibria-player-video-title {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity var(--player-anim-duration) ease, transform var(--player-anim-duration) ease;
+  z-index: 4;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  max-width: 80%;
+}
+
+.anilibria-player:hover .anilibria-player-video-title,
+.anilibria-player-video-title.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Loading indicators */
+.anilibria-player-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  opacity: 1;
+  transition: opacity var(--player-anim-duration) ease;
+  z-index: 5;
+}
+
+.spinner-inner {
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(203, 98, 149, 0.3);
+  border-top: 4px solid var(--player-primary-color);
+  border-radius: 50%;
+  animation: anilibria-player-spin 1s linear infinite;
+}
+
+@keyframes anilibria-player-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.anilibria-player-big-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: var(--player-primary-color);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all var(--player-anim-duration) ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(203, 98, 149, 0.5);
+  z-index: 6;
+}
+
+.anilibria-player-big-play-button.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.anilibria-player-big-play-button:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  background-color: var(--player-primary-hover);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.7), 0 0 40px rgba(203, 98, 149, 0.7);
+}
+
+.anilibria-player-big-play-button svg {
+  width: 40px;
+  height: 40px;
+  fill: white;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+/* Top gradient for title readability */
+.anilibria-player-top-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), transparent);
+  opacity: 0;
+  transition: opacity var(--player-anim-duration) ease;
+  z-index: 3;
+}
+
+.anilibria-player:hover .anilibria-player-top-gradient,
+.anilibria-player-top-gradient.visible {
+  opacity: 1;
+}
+
+/* Error state */
+.anilibria-player-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 0 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+.anilibria-player-error-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: #ef4444;
+}
+
+.anilibria-player-error-icon svg {
+  width: 64px;
+  height: 64px;
+}
+
+.anilibria-player-error p {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.anilibria-player-error .button {
+  margin-top: 24px;
+}
+
+/* Keyboard shortcuts panel */
+.anilibria-player-keyboard-shortcuts {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background-color: rgba(20, 20, 20, 0.9);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  width: 400px;
+  max-width: 90%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 30;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.anilibria-player-keyboard-shortcuts.visible {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.anilibria-player-keyboard-shortcuts h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--player-primary-color);
+}
+
+.anilibria-player-shortcut-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 10px 16px;
+  font-size: 14px;
+}
+
+.anilibria-player-key {
+  font-family: -apple-system, monospace;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 4px 8px;
+  text-align: center;
+  min-width: 30px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+/* Volume popup */
+.anilibria-player-volume-popup {
+  position: absolute;
+  right: -70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--player-primary-color);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  z-index: 25;
+}
+
+.anilibria-player-volume-popup.active {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .anilibria-player {
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .anilibria-player-control-container {
+    padding: 15px 10px;
+  }
+
+  .anilibria-player-time-display {
+    min-width: auto;
+    font-size: 12px;
+  }
+
+  .anilibria-player-volume-slider-container {
+    left: 0;
+    transform: translateX(0) scaleY(0);
+  }
+
+  .anilibria-player-volume-container:hover .anilibria-player-volume-slider-container {
+    transform: translateX(0) scaleY(1);
+  }
+
+  .anilibria-player-controls-wrapper {
+    gap: 10px;
+  }
+
+  .anilibria-player-control-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .anilibria-player-control-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .anilibria-player-keyboard-shortcuts {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .anilibria-player-shortcut-grid {
+    grid-gap: 8px 12px;
+    font-size: 12px;
+  }
+
+  .anilibria-player-quality-button {
+    padding: 4px 10px;
+    font-size: 12px;
+    min-width: 60px;
+  }
+
+  .anilibria-player-thumbnail-preview {
+    width: 160px;
+    height: 90px;
+  }
+
+  .anilibria-player-video-title {
+    font-size: 16px;
+    max-width: 70%;
+  }
+}
+
+@media (max-width: 480px) {
+  .anilibria-player-controls-wrapper {
+    gap: 6px;
+  }
+
+  .anilibria-player-control-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .anilibria-player-control-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .anilibria-player-time-display {
+    font-size: 11px;
+  }
+
+  .anilibria-player-quality-button {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 50px;
+  }
+
+  .anilibria-player-thumbnail-preview {
+    width: 120px;
+    height: 68px;
+    top: -90px;
+  }
+
+  .anilibria-player-progress-hover-time {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .anilibria-player-video-title {
+    font-size: 14px;
+    max-width: 60%;
+  }
+}
