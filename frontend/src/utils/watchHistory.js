@@ -1,15 +1,5 @@
-// src/utils/watchHistory.js
-
-/**
- * Utility for managing anime watch history in localStorage
- */
-
 const WATCH_HISTORY_KEY = 'anilibria_watch_history';
 
-/**
- * Initialize watch history from localStorage or create if not exists
- * @returns {Object} Watch history object
- */
 const getWatchHistory = () => {
     try {
         const storedHistory = localStorage.getItem(WATCH_HISTORY_KEY);
@@ -23,10 +13,6 @@ const getWatchHistory = () => {
     return {};
 };
 
-/**
- * Save watch history to localStorage
- * @param {Object} history - Watch history object
- */
 const saveWatchHistory = (history) => {
     try {
         localStorage.setItem(WATCH_HISTORY_KEY, JSON.stringify(history));
@@ -35,72 +21,34 @@ const saveWatchHistory = (history) => {
     }
 };
 
-/**
- * Get episode watch progress
- * @param {string|number} animeId - Anime ID
- * @param {string|number} episodeId - Episode ID
- * @returns {Object|null} Episode watch data or null if not found
- */
 export const getEpisodeProgress = (animeId, episodeId) => {
     const history = getWatchHistory();
     return history[animeId]?.episodes?.[episodeId] || null;
 };
 
-/**
- * Check if episode is watched
- * @param {string|number} animeId - Anime ID
- * @param {string|number} episodeId - Episode ID
- * @returns {boolean} True if episode is fully watched
- */
 export const isEpisodeWatched = (animeId, episodeId) => {
     const progress = getEpisodeProgress(animeId, episodeId);
     return progress?.completed === true;
 };
 
-/**
- * Check if episode is in progress
- * @param {string|number} animeId - Anime ID
- * @param {string|number} episodeId - Episode ID
- * @returns {boolean} True if episode is partially watched
- */
 export const isEpisodeInProgress = (animeId, episodeId) => {
     const progress = getEpisodeProgress(animeId, episodeId);
     return progress?.completed === false && progress?.progress > 0;
 };
 
-/**
- * Get episode progress percentage
- * @param {string|number} animeId - Anime ID
- * @param {string|number} episodeId - Episode ID
- * @returns {number} Progress percentage (0-100) or 0 if not found
- */
 export const getEpisodeProgressPercentage = (animeId, episodeId) => {
     const progress = getEpisodeProgress(animeId, episodeId);
     return progress?.progress || 0;
 };
 
-/**
- * Get episode watch date
- * @param {string|number} animeId - Anime ID
- * @param {string|number} episodeId - Episode ID
- * @returns {string|null} Date string or null if not found
- */
 export const getEpisodeWatchDate = (animeId, episodeId) => {
     const progress = getEpisodeProgress(animeId, episodeId);
     return progress?.lastWatched || null;
 };
 
-/**
- * Update episode watch progress
- * @param {string|number} animeId - Anime ID
- * @param {string|number} episodeId - Episode ID
- * @param {number} progressPercent - Watch progress percentage (0-100)
- * @param {boolean} [completed=false] - Whether episode is completely watched
- */
 export const updateEpisodeProgress = (animeId, episodeId, progressPercent, completed = false) => {
     const history = getWatchHistory();
 
-    // Initialize anime in history if not exists
     if (!history[animeId]) {
         history[animeId] = {
             id: animeId,
@@ -108,33 +56,21 @@ export const updateEpisodeProgress = (animeId, episodeId, progressPercent, compl
         };
     }
 
-    // Initialize or update episode progress
     history[animeId].episodes[episodeId] = {
         progress: progressPercent,
-        completed: completed || progressPercent >= 90, // Auto-mark as completed if progress >= 90%
+        completed: completed || progressPercent >= 90,
         lastWatched: new Date().toISOString()
     };
 
-    // Update last watched anime
     history[animeId].lastWatched = new Date().toISOString();
 
     saveWatchHistory(history);
 };
 
-/**
- * Mark episode as watched
- * @param {string|number} animeId - Anime ID
- * @param {string|number} episodeId - Episode ID
- */
 export const markEpisodeAsWatched = (animeId, episodeId) => {
     updateEpisodeProgress(animeId, episodeId, 100, true);
 };
 
-/**
- * Get recently watched anime list
- * @param {number} [limit=10] - Maximum number of results
- * @returns {Array} List of recently watched anime with their IDs and dates
- */
 export const getRecentlyWatchedAnime = (limit = 10) => {
     const history = getWatchHistory();
 
@@ -144,11 +80,6 @@ export const getRecentlyWatchedAnime = (limit = 10) => {
         .slice(0, limit);
 };
 
-/**
- * Format timestamp to relative time (e.g., "2 hours ago")
- * @param {string} timestamp - ISO timestamp
- * @returns {string} Relative time string
- */
 export const formatRelativeTime = (timestamp) => {
     if (!timestamp) return '';
 
@@ -173,9 +104,6 @@ export const formatRelativeTime = (timestamp) => {
     }
 };
 
-/**
- * Helper for correct Russian pluralization
- */
 const pluralize = (count, form1, form2, form5) => {
     const remainder10 = count % 10;
     const remainder100 = count % 100;

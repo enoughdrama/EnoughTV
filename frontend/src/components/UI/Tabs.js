@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const Tabs = ({ tabs, activeTab, onChange }) => (
-  <motion.div 
+  <motion.div
     className="tabs-container"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -10,9 +10,9 @@ const Tabs = ({ tabs, activeTab, onChange }) => (
   >
     <div className="tabs">
       {tabs.map((tab) => (
-        <motion.button 
+        <motion.button
           key={tab.id}
-          className={`tab ${activeTab === tab.id ? 'active' : ''}`} 
+          className={`tab ${activeTab === tab.id ? 'active' : ''}`}
           onClick={() => onChange(tab.id)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

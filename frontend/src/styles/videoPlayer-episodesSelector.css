@@ -1,4 +1,3 @@
-/* Episode selection in video player */
 .anilibria-player-episodes-panel {
     position: absolute;
     right: 20px;
@@ -169,7 +168,6 @@
     color: #f59e0b;
 }
 
-/* Next episode notification */
 .anilibria-player-next-episode {
     position: absolute;
     bottom: 90px;

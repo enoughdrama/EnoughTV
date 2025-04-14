@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fetchAPI, fixImagePath, fetchRandomFranchises, formatFranchiseDuration } from '../../utils/api';
 
-const Franchises = ({ onAnimeClick, location }) => {
+const Franchises = ({ onAnimeClick }) => {
   const [franchises, setFranchises] = useState([]);
   const [selectedFranchise, setSelectedFranchise] = useState(null);
   const [franchiseDetails, setFranchiseDetails] = useState(null);
@@ -16,21 +16,10 @@ const Franchises = ({ onAnimeClick, location }) => {
       try {
         const data = await fetchAPI('/anime/franchises');
         if (data && data.length > 0) {
-          // Sort franchises by rating
-          const sortedFranchises = [...data].sort((a, b) => 
+          const sortedFranchises = [...data].sort((a, b) =>
             b.rating - a.rating
           );
           setFranchises(sortedFranchises);
-          
-          // Check if we need to select a specific franchise based on navigation state
-          const selectedFranchiseId = location?.state?.selectedFranchiseId;
-          if (selectedFranchiseId) {
-            const franchise = sortedFranchises.find(f => f.id === selectedFranchiseId);
-            if (franchise) {
-              setSelectedFranchise(franchise);
-              fetchFranchiseDetails(selectedFranchiseId);
-            }
-          }
         }
       } catch (err) {
         setError('Не удалось загрузить франшизы');
@@ -40,11 +29,11 @@ const Franchises = ({ onAnimeClick, location }) => {
     };
 
     fetchFranchises();
-  }, [location]);
+  }, []);
 
   const fetchFranchiseDetails = async (franchiseId) => {
     if (!franchiseId) return;
-    
+
     setDetailsLoading(true);
     try {
       const data = await fetchAPI(`/anime/franchises/${franchiseId}`);
@@ -91,11 +80,6 @@ const Franchises = ({ onAnimeClick, location }) => {
             </div>
           </div>
         </div>
-        <div className="franchise-card-badge">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
       </div>
       <div className="franchise-card-content">
         <h3 className="franchise-card-title">{franchise.name}</h3>
@@ -134,7 +118,7 @@ const Franchises = ({ onAnimeClick, location }) => {
           </svg>
         </div>
         <p>{error}</p>
-        <motion.button 
+        <motion.button
           className="button primary-button"
           onClick={() => window.location.reload()}
           whileHover={{ scale: 1.05 }}
@@ -147,13 +131,13 @@ const Franchises = ({ onAnimeClick, location }) => {
   }
 
   return (
-    <motion.main 
+    <motion.main
       className="main-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div 
+      <motion.div
         className="page-header"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -162,7 +146,7 @@ const Franchises = ({ onAnimeClick, location }) => {
         <h1>Франшизы</h1>
         <p>Полные коллекции серий и сезонов ваших любимых аниме</p>
       </motion.div>
-      
+
       <div className="content-container">
         {selectedFranchise ? (
           <motion.div
@@ -185,7 +169,7 @@ const Franchises = ({ onAnimeClick, location }) => {
               </svg>
               Назад к списку
             </motion.button>
-            
+
             <div className="franchise-details-header">
               <div className="franchise-details-info">
                 <h2>{selectedFranchise.name}</h2>
@@ -206,7 +190,7 @@ const Franchises = ({ onAnimeClick, location }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="franchise-details-stats">
                 <div className="franchise-details-stat">
                   <div className="franchise-details-stat-value">{selectedFranchise.total_releases}</div>
@@ -222,7 +206,7 @@ const Franchises = ({ onAnimeClick, location }) => {
                 </div>
               </div>
             </div>
-            
+
             {detailsLoading ? (
               <div className="franchise-details-loading">
                 <div className="franchise-details-loading-spinner"></div>
@@ -248,7 +232,7 @@ const Franchises = ({ onAnimeClick, location }) => {
                         <div className="franchise-release-image">
                           <img
                             src={fixImagePath(
-                              item.release.poster?.optimized?.src || 
+                              item.release.poster?.optimized?.src ||
                               item.release.poster?.src
                             )}
                             alt={item.release.name.main}

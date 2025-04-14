@@ -9,7 +9,7 @@ const ErrorState = ({ error, onRetry }) => (
       </svg>
     </div>
     <p>{error}</p>
-    <motion.button 
+    <motion.button
       className="button primary-button"
       onClick={onRetry}
       whileHover={{ scale: 1.05 }}

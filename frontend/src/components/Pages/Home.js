@@ -21,8 +21,7 @@ const Home = ({ onAnimeClick, navigateTo }) => {
   const [loadingGenres, setLoadingGenres] = useState(true);
   const [loadingGenreAnime, setLoadingGenreAnime] = useState(false);
   const [showAllGenres, setShowAllGenres] = useState(false);
-  
-  // New franchises state
+
   const [franchises, setFranchises] = useState([]);
   const [loadingFranchises, setLoadingFranchises] = useState(true);
 
@@ -41,8 +40,7 @@ const Home = ({ onAnimeClick, navigateTo }) => {
 
           setHeroAnime(latest[0]);
         }
-        
-        // Fetch random franchises
+
         const randomFranchises = await fetchRandomFranchises(4);
         if (randomFranchises) {
           setFranchises(randomFranchises);
@@ -58,21 +56,17 @@ const Home = ({ onAnimeClick, navigateTo }) => {
     fetchData();
   }, []);
 
-  // Fetch genres
   useEffect(() => {
     const fetchGenres = async () => {
       setLoadingGenres(true);
       try {
-        // Fetch all genres
         const allGenresData = await fetchAPI('/anime/genres');
         if (allGenresData && allGenresData.length > 0) {
-          // Sort genres by total releases
           const sortedGenres = [...allGenresData].sort((a, b) =>
             b.total_releases - a.total_releases
           );
           setAllGenres(sortedGenres);
 
-          // Show only the top genres initially
           setGenres(sortedGenres.slice(0, showAllGenres ? sortedGenres.length : 10));
         }
       } catch (err) {
@@ -85,7 +79,6 @@ const Home = ({ onAnimeClick, navigateTo }) => {
     fetchGenres();
   }, [showAllGenres]);
 
-  // Function to fetch anime by genre
   const fetchAnimeByGenre = async (genreId, page = 1) => {
     if (!genreId) return;
 
@@ -103,7 +96,6 @@ const Home = ({ onAnimeClick, navigateTo }) => {
     }
   };
 
-  // Handle genre selection
   const handleGenreSelect = (genre) => {
     if (selectedGenre?.id === genre.id) {
       setSelectedGenre(null);
@@ -115,23 +107,19 @@ const Home = ({ onAnimeClick, navigateTo }) => {
     }
   };
 
-  // Handle genre pagination
   const handleGenrePagination = (newPage) => {
     if (newPage < 1 || newPage > totalGenrePages) return;
     setGenrePage(newPage);
     fetchAnimeByGenre(selectedGenre.id, newPage);
   };
 
-  // Toggle all genres display
   const toggleAllGenres = () => {
     setShowAllGenres(!showAllGenres);
   };
 
-  // Navigate to franchises page with selected franchise
-  const goToFranchises = (franchiseId) => {
+  const goToFranchises = () => {
     if (navigateTo) {
-      // Pass the franchise ID as a state parameter
-      navigateTo(PAGES.FRANCHISES, { selectedFranchiseId: franchiseId });
+      navigateTo(PAGES.FRANCHISES);
     }
   };
 
@@ -227,10 +215,10 @@ const Home = ({ onAnimeClick, navigateTo }) => {
               >
                 Популярные франшизы
               </motion.h2>
-              
+
               <motion.button
                 className="section-action-button"
-                onClick={() => goToFranchises()}
+                onClick={goToFranchises}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
@@ -243,7 +231,7 @@ const Home = ({ onAnimeClick, navigateTo }) => {
                 </svg>
               </motion.button>
             </div>
-            
+
             <div className="featured-franchises">
               {loadingFranchises ? (
                 <>
@@ -263,7 +251,11 @@ const Home = ({ onAnimeClick, navigateTo }) => {
                     <motion.div
                       key={franchise.id}
                       className="featured-franchise-card"
-                      onClick={() => goToFranchises(franchise.id)}
+                      onClick={() => {
+                        if (navigateTo) {
+                          navigateTo(PAGES.FRANCHISES);
+                        }
+                      }}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.1 }}
@@ -286,12 +278,6 @@ const Home = ({ onAnimeClick, navigateTo }) => {
                               <span className="featured-franchise-stat-label">эпизодов</span>
                             </div>
                           </div>
-                        </div>
-                        <div className="featured-franchise-badge">
-                          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19 21L12 17L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          Франшиза
                         </div>
                       </div>
                       <div className="featured-franchise-content">

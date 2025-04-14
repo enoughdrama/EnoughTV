@@ -78,8 +78,8 @@ const Schedule = ({ onAnimeClick }) => {
   };
 
   const getActiveDayLabel = () => {
-    const day = showFullSchedule 
-      ? weekDays.find(d => d.id === activeDay)?.label 
+    const day = showFullSchedule
+      ? weekDays.find(d => d.id === activeDay)?.label
       : simpleDays.find(d => d.id === activeDay)?.label;
     return day || '';
   };
@@ -137,7 +137,7 @@ const Schedule = ({ onAnimeClick }) => {
             </span>
             <span>Расписание аниме</span>
           </div>
-          
+
           <motion.div
             className="schedule-controls"
             initial={{ opacity: 0, y: 20 }}
@@ -181,7 +181,7 @@ const Schedule = ({ onAnimeClick }) => {
             <span>Показаны релизы:</span>
             <span className="day-indicator">{getActiveDayLabel()}</span>
           </div>
-          
+
           <div className="tabs-grid">
             {(showFullSchedule ? weekDays : simpleDays).map((day, index) => (
               <motion.button

@@ -19,7 +19,7 @@ const Search = ({ onAnimeClick }) => {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!query.trim()) return;
-    
+
     setIsSearching(true);
     setHasSearched(true);
     try {
@@ -33,13 +33,13 @@ const Search = ({ onAnimeClick }) => {
   };
 
   return (
-    <motion.main 
+    <motion.main
       className="main-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div 
+      <motion.div
         className="page-header"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -48,10 +48,10 @@ const Search = ({ onAnimeClick }) => {
         <h1>Поиск аниме</h1>
         <p>Найдите любимое аниме по названию</p>
       </motion.div>
-      
+
       <div className="content-container">
-        <motion.form 
-          onSubmit={handleSearch} 
+        <motion.form
+          onSubmit={handleSearch}
           className="search-form"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -72,9 +72,9 @@ const Search = ({ onAnimeClick }) => {
               className="search-input"
             />
             {query && (
-              <motion.button 
-                type="button" 
-                className="clear-input" 
+              <motion.button
+                type="button"
+                className="clear-input"
                 onClick={() => setQuery('')}
                 aria-label="Очистить поиск"
                 initial={{ opacity: 0, scale: 0.5 }}
@@ -89,9 +89,9 @@ const Search = ({ onAnimeClick }) => {
               </motion.button>
             )}
           </div>
-          <motion.button 
-            type="submit" 
-            className="button primary-button search-button" 
+          <motion.button
+            type="submit"
+            className="button primary-button search-button"
             disabled={isSearching || !query.trim()}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -103,10 +103,10 @@ const Search = ({ onAnimeClick }) => {
             )}
           </motion.button>
         </motion.form>
-        
+
         <AnimatePresence mode="wait">
           {isSearching ? (
-            <motion.div 
+            <motion.div
               className="anime-grid"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -136,7 +136,7 @@ const Search = ({ onAnimeClick }) => {
                 </motion.div>
               ) : (
                 hasSearched && (
-                  <motion.div 
+                  <motion.div
                     className="empty-state search-empty-state"
                     key="empty"
                     initial={{ opacity: 0, scale: 0.9 }}

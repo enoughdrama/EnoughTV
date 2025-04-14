@@ -1,4 +1,3 @@
-/* Header Styles */
 .header-container {
   border-radius: 20px;
 
@@ -90,7 +89,6 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Navigation */
 .header-nav {
   display: flex;
   gap: var(--spacing-4);
@@ -131,7 +129,6 @@
   z-index: 1;
 }
 
-/* Theme Toggle */
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -179,25 +176,23 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .header-content {
     justify-content: space-between;
   }
-  
+
   .header-nav {
     display: none;
   }
-  
+
   .header-logo {
     margin-right: 0;
   }
-  
+
   .logo-text {
     font-size: 1.25rem;
   }
-  
-  /* Mobile menu icon for future implementation */
+
   .theme-toggle {
     width: 40px;
     height: 40px;

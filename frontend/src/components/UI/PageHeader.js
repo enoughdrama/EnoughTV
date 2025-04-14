@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const PageHeader = ({ title, subtitle }) => (
-  <motion.div 
+  <motion.div
     className="page-header"
     initial={{ opacity: 0, y: -20 }}
     animate={{ opacity: 1, y: 0 }}

@@ -5,7 +5,7 @@ import { fetchAPI, fixImagePath } from '../../utils/api';
 import { updateEpisodeProgress } from '../../utils/watchHistory';
 import '../../styles/animeDetails.css';
 
-const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
+const AnimeDetails = ({ animeId, onWatchEpisode }) => {
   const [anime, setAnime] = useState(null);
   const [franchiseData, setFranchiseData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -408,11 +408,7 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                                 <motion.div
                                   key={item.id}
                                   className={`franchise-release-card ${item.release.id === anime.id ? 'current' : ''}`}
-                                  onClick={() => {
-                                    if (item.release.id !== anime.id && onAnimeClick) {
-                                      onAnimeClick(item.release.id);
-                                    }
-                                  }}
+                                  onClick={() => item.release.id !== anime.id && window.location.href === `/anime/${item.release.id}`}
                                   whileHover={{ scale: 1.03 }}
                                   whileTap={{ scale: 0.98 }}
                                 >
@@ -424,7 +420,6 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                                     {item.release.id === anime.id && (
                                       <div className="current-badge">Текущий</div>
                                     )}
-                                    <div className="franchise-release-sort-badge">#{item.sort_order}</div>
                                   </div>
                                   <div className="franchise-release-info">
                                     <div className="franchise-release-title">{item.release.name.main}</div>

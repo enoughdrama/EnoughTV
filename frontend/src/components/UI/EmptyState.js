@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const EmptyState = ({ icon, message, hint }) => (
-  <motion.div 
+  <motion.div
     className="empty-state"
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}

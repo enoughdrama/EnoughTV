@@ -44,7 +44,6 @@
   display: block;
 }
 
-/* Custom Quality Selector */
 .anilibria-player-quality-menu {
   position: relative;
   margin-right: 8px;
@@ -188,7 +187,6 @@
   background-color: rgba(239, 68, 68, 0.4);
 }
 
-/* Progress bar with dynamic sizing */
 .anilibria-player-progress-bar {
   flex: 1;
   height: var(--player-slider-height);
@@ -375,7 +373,6 @@
   object-fit: cover;
 }
 
-/* Time tooltip styles */
 .anilibria-player-progress-hover-time {
   position: absolute;
   top: -30px;
@@ -399,7 +396,6 @@
   z-index: 25;
 }
 
-/* Title and controls */
 .anilibria-player-video-title {
   position: absolute;
   top: 20px;
@@ -421,7 +417,6 @@
   transform: translateY(0);
 }
 
-/* Loading indicators */
 .anilibria-player-spinner {
   position: absolute;
   top: 50%;
@@ -493,7 +488,6 @@
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
 
-/* Top gradient for title readability */
 .anilibria-player-top-gradient {
   position: absolute;
   top: 0;
@@ -511,7 +505,6 @@
   opacity: 1;
 }
 
-/* Error state */
 .anilibria-player-error {
   display: flex;
   flex-direction: column;
@@ -552,7 +545,6 @@
   margin-top: 24px;
 }
 
-/* Keyboard shortcuts panel */
 .anilibria-player-keyboard-shortcuts {
   position: absolute;
   bottom: 90px;
@@ -607,7 +599,6 @@
   color: #fff;
 }
 
-/* Volume popup */
 .anilibria-player-volume-popup {
   position: absolute;
   right: -70px;
@@ -633,7 +624,6 @@
   transform: translateY(-50%) scale(1);
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .anilibria-player {
     max-width: 100%;

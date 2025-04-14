@@ -1,23 +1,17 @@
-// Updates to api.js to support franchise data and authentication
-
 const API_BASE_URL = 'https://anilibria.top/api/v1';
 const SITE_URL = 'https://anilibria.top';
 
-export const fixImagePath = (path) => {
-  // Handle null, undefined, or empty string
+export const fixImagePath = (path?: string | null): string => {
   if (!path) return '';
 
-  // Check if the path is already a full URL
   try {
     new URL(path);
     return path;
   } catch {
-    // If not a full URL, proceed with local path handling
     if (path.startsWith('/storage')) {
       return `${SITE_URL.replace(/\/$/, '')}${path}`;
     }
     
-    // If it's a relative path that doesn't start with /storage
     if (path.startsWith('/')) {
       return `${SITE_URL.replace(/\/$/, '')}${path}`;
     }
@@ -44,11 +38,6 @@ export const cleanHlsUrl = (url) => {
   return url.split('?')[0];
 };
 
-/**
- * Gets HLS URLs for different qualities
- * @param {Object} episode - Episode object
- * @returns {Object} - Object with HLS URLs for different qualities
- */
 export const getHlsUrls = (episode) => {
   return {
     '480p': episode?.hls_480 ? cleanHlsUrl(fixImagePath(episode.hls_480)) : null,
@@ -57,11 +46,6 @@ export const getHlsUrls = (episode) => {
   };
 };
 
-/**
- * Gets the default quality from available HLS URLs
- * @param {Object} hlsUrls - Object with HLS URLs
- * @returns {string|null} - Default quality or null if none available
- */
 export const getDefaultQuality = (hlsUrls) => {
   if (hlsUrls['1080p']) return '1080p';
   if (hlsUrls['720p']) return '720p';
@@ -69,11 +53,6 @@ export const getDefaultQuality = (hlsUrls) => {
   return null;
 };
 
-/**
- * Fetches franchise data for a specific release
- * @param {number|string} releaseId - Release ID
- * @returns {Promise<Array|null>} - Franchise data or null if not found
- */
 export const fetchFranchiseData = async (releaseId) => {
   if (!releaseId) return null;
   try {
@@ -84,11 +63,6 @@ export const fetchFranchiseData = async (releaseId) => {
   }
 };
 
-/**
- * Fetches details for a specific franchise
- * @param {string} franchiseId - Franchise ID
- * @returns {Promise<Object|null>} - Franchise details or null if not found
- */
 export const fetchFranchiseDetails = async (franchiseId) => {
   if (!franchiseId) return null;
   try {
@@ -99,11 +73,6 @@ export const fetchFranchiseDetails = async (franchiseId) => {
   }
 };
 
-/**
- * Fetches random franchises
- * @param {number} limit - Number of franchises to fetch
- * @returns {Promise<Array|null>} - Random franchises or null if error
- */
 export const fetchRandomFranchises = async (limit = 4) => {
   try {
     return await fetchAPI(`/anime/franchises/random?limit=${limit}`);
@@ -113,11 +82,6 @@ export const fetchRandomFranchises = async (limit = 4) => {
   }
 };
 
-/**
- * Formats franchise duration for display
- * @param {number} seconds - Duration in seconds
- * @returns {string} - Formatted duration string
- */
 export const formatFranchiseDuration = (seconds) => {
   if (!seconds) return 'N/A';
 
@@ -139,8 +103,5 @@ export const PAGES = {
   SEARCH: 'SEARCH',
   ANIME_DETAILS: 'ANIME_DETAILS',
   VIDEO_PLAYER: 'VIDEO_PLAYER',
-  FRANCHISES: 'FRANCHISES',
-  PROFILE: 'PROFILE',
-  HISTORY: 'HISTORY',
-  FAVORITES: 'FAVORITES'
+  FRANCHISES: 'FRANCHISES'
 };

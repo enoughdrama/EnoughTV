@@ -49,10 +49,8 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   const lastPauseTimeRef = useRef(0);
   const nextEpisodeTimeoutRef = useRef(null);
 
-  // Sort episodes by ordinal number
   const sortedEpisodes = [...(allEpisodes || [])].sort((a, b) => a.ordinal - b.ordinal);
 
-  // Find current episode index and next episode
   useEffect(() => {
     if (!currentEpisode || !sortedEpisodes.length) return;
 
@@ -64,11 +62,10 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     }
   }, [currentEpisode, sortedEpisodes]);
 
-  // Update current episode when episode prop changes
   useEffect(() => {
     if (episode && episode.id !== currentEpisode?.id) {
       setCurrentEpisode(episode);
-      savedTimeRef.current = null; // Reset saved time when changing episodes
+      savedTimeRef.current = null;
     }
   }, [episode]);
 
@@ -90,7 +87,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     return null;
   };
 
-  // Load saved progress when player initializes
   useEffect(() => {
     if (animeId && currentEpisode?.id) {
       const savedProgress = getEpisodeProgressPercentage(animeId, currentEpisode.id);
@@ -106,7 +102,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     }
   }, []);
 
-  // Add event listeners for ESC key and clicks outside the player
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -167,7 +162,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     return hlsUrls[getDefaultQuality()];
   };
 
-  // Handle video initialization and update when episode changes
   useEffect(() => {
     if (!isHlsLoaded || !currentEpisode || !currentQuality) return;
 
@@ -188,7 +182,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       hlsRef.current = null;
     }
 
-    // Save current time before changing source
     const oldTime = videoElement.currentTime;
 
     if (window.Hls && window.Hls.isSupported()) {
@@ -206,9 +199,9 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
         // If we have a saved position, try to seek to it
         if (savedTimeRef.current !== null && videoElement.duration) {
           const targetTime = (savedTimeRef.current / 100) * videoElement.duration;
-          if (targetTime > 0 && targetTime < videoElement.duration - 10) { // Don't resume if near the end
+          if (targetTime > 0 && targetTime < videoElement.duration - 10) {
             videoElement.currentTime = targetTime;
-            savedTimeRef.current = null; // Clear after using
+            savedTimeRef.current = null;
           }
         }
 
@@ -241,12 +234,11 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       videoElement.addEventListener('loadedmetadata', () => {
         setIsLoading(false);
 
-        // If we have a saved position, try to seek to it
         if (savedTimeRef.current !== null && videoElement.duration) {
           const targetTime = (savedTimeRef.current / 100) * videoElement.duration;
           if (targetTime > 0 && targetTime < videoElement.duration - 10) {
             videoElement.currentTime = targetTime;
-            savedTimeRef.current = null; // Clear after using
+            savedTimeRef.current = null;
           }
         }
 
@@ -265,7 +257,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       setIsLoading(false);
     }
 
-    // Setup progress tracking interval to save watch progress periodically
     setupProgressTracking();
 
     return () => {
@@ -274,12 +265,10 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
         hlsRef.current = null;
       }
 
-      // Clear progress tracking interval
       clearProgressTrackingInterval();
     };
   }, [currentEpisode, currentQuality, isHlsLoaded]);
 
-  // Set up interval to save progress every 5 seconds while watching
   const setupProgressTracking = () => {
     if (progressSaveIntervalRef.current) {
       clearInterval(progressSaveIntervalRef.current);
@@ -290,26 +279,22 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       if (video && video.duration && animeId && currentEpisode?.id) {
         const progressPercent = Math.floor((video.currentTime / video.duration) * 100);
 
-        // Only save if we've watched at least 5% but not finished
         if (progressPercent >= 5 && progressPercent < 95) {
           updateEpisodeProgress(animeId, currentEpisode.id, progressPercent, false);
         }
-        // Mark as completed if watched to near the end
         else if (progressPercent >= 95) {
           updateEpisodeProgress(animeId, currentEpisode.id, 100, true);
         }
       }
-    }, 5000); // Save every 5 seconds
+    }, 5000);
   };
 
-  // Clear progress tracking interval
   const clearProgressTrackingInterval = () => {
     if (progressSaveIntervalRef.current) {
       clearInterval(progressSaveIntervalRef.current);
       progressSaveIntervalRef.current = null;
     }
 
-    // Save final progress on unmount
     const video = videoRef.current;
     if (video && video.duration && animeId && currentEpisode?.id) {
       const progressPercent = Math.floor((video.currentTime / video.duration) * 100);
@@ -328,7 +313,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     const handleTimeUpdate = () => {
       setCurrentTime(video.currentTime);
 
-      // Show next episode notification when near the end
       if (nextEpisode && video.duration && video.currentTime > video.duration * 0.85) {
         setShowNextEpisodeNotification(true);
       }
@@ -344,7 +328,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
     const handlePause = () => {
       setIsPlaying(false);
-      // Store the current time when paused so we can check if we need to reset
       lastPauseTimeRef.current = video.currentTime;
     };
 
@@ -369,17 +352,15 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       setIsLoading(false);
     };
 
-    // Track when the video ends to mark as completed
     const handleEnded = () => {
       if (animeId && currentEpisode?.id) {
         updateEpisodeProgress(animeId, currentEpisode.id, 100, true);
 
-        // Auto play next episode if enabled
         if (autoplayEnabled && nextEpisode) {
           clearTimeout(nextEpisodeTimeoutRef.current);
           nextEpisodeTimeoutRef.current = setTimeout(() => {
             playNextEpisode();
-          }, 1500); // Delay to give user a chance to cancel
+          }, 1500);
         }
       }
     };
@@ -412,7 +393,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     if (!video) return;
 
     if (video.paused) {
-      // If we're resuming, make sure we don't reset to the beginning
       video.play();
     } else {
       video.pause();
@@ -461,7 +441,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     video.currentTime = pos * video.duration;
     createRippleEffect(e, progressBar);
 
-    // Set progress bar to active state for slightly longer
     setIsProgressActive(true);
     setTimeout(() => {
       setIsProgressActive(false);
@@ -525,7 +504,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   const handleQualityChange = (quality) => {
     if (quality === currentQuality) return;
 
-    // Save current position before changing quality
     if (videoRef.current) {
       savedTimeRef.current = (videoRef.current.currentTime / videoRef.current.duration) * 100;
     }
@@ -556,7 +534,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     setCurrentEpisode(nextEpisode);
     setShowNextEpisodeNotification(false);
 
-    // Find the next episode after the one we're about to play
     const nextEpisodeIndex = sortedEpisodes.findIndex(ep => ep.id === nextEpisode.id);
     if (nextEpisodeIndex !== -1 && nextEpisodeIndex < sortedEpisodes.length - 1) {
       setNextEpisode(sortedEpisodes[nextEpisodeIndex + 1]);
@@ -573,7 +550,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     clearTimeout(nextEpisodeTimeoutRef.current);
   };
 
-  // Close quality menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (showQualityMenu && !e.target.closest('.anilibria-player-quality-menu')) {
@@ -676,12 +652,9 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     };
   }, []);
 
-  // Handle closing the player with progress saving
   const handleClose = () => {
-    // Save current progress before closing
     clearProgressTrackingInterval();
 
-    // Call parent's onClose handler
     onClose();
   };
 
@@ -689,7 +662,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
-  // Custom quality selector rendering function
   const renderQualitySelector = () => {
     const hlsUrls = getHlsUrls();
     const availableQualities = [];
@@ -750,7 +722,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     );
   };
 
-  // Episode selection button and panel
   const renderEpisodesButton = () => {
     if (!sortedEpisodes || sortedEpisodes.length <= 1) return null;
 
@@ -769,7 +740,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     );
   };
 
-  // Episodes panel
   const renderEpisodesPanel = () => {
     if (!sortedEpisodes || sortedEpisodes.length <= 1) return null;
 
@@ -849,7 +819,6 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     );
   };
 
-  // Next episode notification
   const renderNextEpisodeNotification = () => {
     if (!nextEpisode || !showNextEpisodeNotification) return null;
 
@@ -881,14 +850,14 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the container
+      onClick={(e) => e.stopPropagation()}
     >
       <div
         className="anilibria-player"
         ref={playerRef}
         onMouseMove={() => showControlsTemporarily()}
         onMouseLeave={() => isPlaying && setShowControls(false)}
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the player
+        onClick={(e) => e.stopPropagation()}
       >
         <video
           ref={videoRef}

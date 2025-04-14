@@ -6,8 +6,6 @@ import './styles/genres.css';
 import './styles/episode-list.css';
 import './styles/videoPlayer.css';
 import './styles/videoPlayer-episodesSelector.css';
-import './styles/animeDetails.css';
-import './styles/franchise.css';
 
 import { PAGES } from './utils/api';
 import Header from './components/Header/Header';
@@ -25,13 +23,11 @@ const App = () => {
   const [allEpisodes, setAllEpisodes] = useState([]);
   const [showVideoPlayer, setShowVideoPlayer] = useState(false);
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
-  const [pageState, setPageState] = useState({});
 
-  const navigateTo = useCallback((page, state = {}) => {
+  const navigateTo = useCallback((page) => {
     setIsPageTransitioning(true);
     setTimeout(() => {
       setCurrentPage(page);
-      setPageState(state);
 
       if (page !== PAGES.ANIME_DETAILS) {
         setSelectedAnimeId(null);
@@ -70,19 +66,12 @@ const App = () => {
         return <AnimeDetails
           animeId={selectedAnimeId}
           onWatchEpisode={handleWatchEpisode}
-          onAnimeClick={handleAnimeClick}
         />;
       case PAGES.FRANCHISES:
-        return <Franchises 
-          onAnimeClick={handleAnimeClick} 
-          location={{ state: pageState }}
-        />;
+        return <Franchises onAnimeClick={handleAnimeClick} />;
       case PAGES.HOME:
       default:
-        return <Home 
-          onAnimeClick={handleAnimeClick} 
-          navigateTo={navigateTo}
-        />;
+        return <Home onAnimeClick={handleAnimeClick} />;
     }
   };
 
