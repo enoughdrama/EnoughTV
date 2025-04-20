@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './styles/global/index.css';
 import './styles/header.css';
@@ -26,24 +26,64 @@ const App = () => {
   const [showVideoPlayer, setShowVideoPlayer] = useState(false);
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const [pageState, setPageState] = useState({});
+  
+  // Add a reference to track and clear the transition timer
+  const transitionTimerRef = useRef(null);
+  // Add a safety timer to prevent infinite loading
+  const safetyTimerRef = useRef(null);
+
+  // Cleanup timers when component unmounts
+  useEffect(() => {
+    return () => {
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+      if (safetyTimerRef.current) {
+        clearTimeout(safetyTimerRef.current);
+      }
+    };
+  }, []);
 
   const navigateTo = useCallback((page, state = {}) => {
+    // Clear any existing timers first
+    if (transitionTimerRef.current) {
+      clearTimeout(transitionTimerRef.current);
+    }
+    if (safetyTimerRef.current) {
+      clearTimeout(safetyTimerRef.current);
+    }
+
     setIsPageTransitioning(true);
-    setTimeout(() => {
-      setCurrentPage(page);
-      setPageState(state);
 
-      if (page !== PAGES.ANIME_DETAILS) {
-        setSelectedAnimeId(null);
-      }
-      if (page !== PAGES.VIDEO_PLAYER) {
-        setShowVideoPlayer(false);
-      }
+    transitionTimerRef.current = setTimeout(() => {
+      try {
+        setCurrentPage(page);
+        setPageState(state);
 
-      window.scrollTo(0, 0);
-      setIsPageTransitioning(false);
+        if (page !== PAGES.ANIME_DETAILS) {
+          setSelectedAnimeId(null);
+        }
+        if (page !== PAGES.VIDEO_PLAYER) {
+          setShowVideoPlayer(false);
+        }
+
+        window.scrollTo(0, 0);
+      } catch (error) {
+        console.error("Navigation error:", error);
+      } finally {
+        setIsPageTransitioning(false);
+        transitionTimerRef.current = null;
+      }
     }, 300);
-  }, []);
+
+    safetyTimerRef.current = setTimeout(() => {
+      if (isPageTransitioning) {
+        console.warn("Safety timer triggered - forcing exit from transition state");
+        setIsPageTransitioning(false);
+      }
+      safetyTimerRef.current = null;
+    }, 2000);
+  }, [isPageTransitioning]);
 
   const handleAnimeClick = useCallback((animeId) => {
     setSelectedAnimeId(animeId);
