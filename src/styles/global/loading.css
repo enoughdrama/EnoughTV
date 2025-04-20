@@ -1,0 +1,112 @@
+.skeleton-card {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background-color: var(--card-color);
+    box-shadow: var(--shadow-md);
+}
+
+.skeleton-image {
+    height: 280px;
+    background-color: var(--border-color);
+}
+
+.skeleton-content {
+    padding: var(--spacing-4);
+}
+
+.skeleton-title {
+    height: 1.25rem;
+    margin-bottom: var(--spacing-2);
+    background-color: var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.skeleton-meta {
+    height: 0.875rem;
+    width: 60%;
+    background-color: var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.skeleton-card .skeleton-image,
+.skeleton-card .skeleton-title,
+.skeleton-card .skeleton-meta {
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-card .skeleton-image::after,
+.skeleton-card .skeleton-title::after,
+.skeleton-card .skeleton-meta::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0,
+            rgba(255, 255, 255, 0.2) 20%,
+            rgba(255, 255, 255, 0.5) 60%,
+            rgba(255, 255, 255, 0));
+    animation: shimmer 2s infinite linear;
+    will-change: transform;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.anime-details-skeleton {
+    padding: var(--spacing-8) var(--spacing-4);
+    max-width: var(--content-width);
+    margin: 0 auto;
+}
+
+.poster-skeleton {
+    height: 320px;
+    width: 220px;
+    background-color: var(--border-color);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-6);
+}
+
+.content-skeleton>div {
+    background-color: var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-4);
+}
+
+.title-skeleton {
+    height: 2rem;
+    width: 70%;
+}
+
+.meta-skeleton {
+    height: 1.25rem;
+    width: 50%;
+}
+
+.desc-skeleton {
+    height: 200px;
+}
+
+.search-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: search-spinner 0.8s linear infinite;
+    will-change: transform;
+}
+
+@keyframes search-spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}

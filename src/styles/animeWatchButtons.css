@@ -1,0 +1,182 @@
+.watch-buttons-container {
+    display: flex;
+    gap: var(--spacing-4);
+    flex-wrap: wrap;
+    margin-top: var(--spacing-4);
+    position: relative;
+}
+
+.resume-button {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-3) var(--spacing-4) var(--spacing-3) var(--spacing-3);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+    min-width: 240px;
+}
+
+.resume-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.resume-button:hover::before {
+    opacity: 1;
+}
+
+.watch-button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    margin-right: var(--spacing-3);
+}
+
+.watch-button-icon svg {
+    width: 20px;
+    height: 20px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.resume-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.resume-text {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+}
+
+.resume-details {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-top: 2px;
+    white-space: nowrap;
+}
+
+.progress-indicator {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    z-index: 1;
+    will-change: transform;
+}
+
+.resume-button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+
+.restart-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-4);
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.restart-button:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.restart-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.watch-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-6);
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform, box-shadow;
+}
+
+.watch-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+}
+
+.watch-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.watch-button:hover::before {
+    opacity: 1;
+}
+
+.watch-button svg {
+    width: 20px;
+    height: 20px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+@media (max-width: 768px) {
+    .watch-buttons-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-3);
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .resume-button,
+    .restart-button,
+    .watch-button {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .watch-buttons-container {
+        max-width: 100%;
+    }
+
+    .resume-details {
+        font-size: 0.8rem;
+    }
+
+    .resume-button {
+        min-width: unset;
+    }
+}

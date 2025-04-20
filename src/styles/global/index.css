@@ -1,0 +1,16 @@
+/* Variables and base styles should be imported first */
+@import 'variables.css';
+@import 'base.css';
+
+/* Layout and structure */
+@import 'layout.css';
+@import 'grid.css';
+
+/* Component styles */
+@import 'buttons.css';
+@import 'components.css';
+@import 'states.css';
+@import 'loading.css';
+
+/* Responsive styles should be imported last */
+@import 'responsive.css';
