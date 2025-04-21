@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'https://anilibria.wtf/api/v1';
 const SITE_URL = 'https://anilibria.wtf';
 
