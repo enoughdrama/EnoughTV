@@ -8,7 +8,9 @@ import {
   findLastWatchedEpisode,
   formatTimeMMSS
 } from '../../utils/watchHistory';
+import { isInFavorites, toggleFavorite } from '../../utils/favorites';
 import '../../styles/animeDetails.css';
+import '../../styles/favorites.css';
 
 const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
   const [anime, setAnime] = useState(null);
@@ -19,6 +21,7 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
   const [selectedEpisode, setSelectedEpisode] = useState(null);
   const [activeTab, setActiveTab] = useState('info');
   const [lastWatchedInfo, setLastWatchedInfo] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchAnimeDetails = async () => {
@@ -27,6 +30,10 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
         const data = await fetchAPI(`/anime/releases/${animeId}`);
         if (data) {
           setAnime(data);
+          
+          // Check if anime is in favorites
+          setIsFavorite(isInFavorites(data.id));
+          
           if (data.episodes && data.episodes.length > 0) {
             setSelectedEpisode(data.episodes[0]);
 
@@ -104,6 +111,13 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
 
     // Передаем эпизод с временем старта в плеер
     onWatchEpisode(episodeWithStartTime, anime.episodes);
+  };
+
+  const handleToggleFavorite = () => {
+    if (anime) {
+      const newFavoriteStatus = toggleFavorite(anime);
+      setIsFavorite(newFavoriteStatus);
+    }
   };
 
   const formatDuration = (seconds) => {
@@ -302,6 +316,22 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                     С начала
                   </motion.button>
                 )}
+
+                {/* Favorite button */}
+                <motion.button
+                  className={`favorite-button ${isFavorite ? 'active' : ''}`}
+                  onClick={handleToggleFavorite}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 21l-7-4-7 4V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {isFavorite ? 'В избранном' : 'Добавить в избранное'}
+                </motion.button>
               </motion.div>
             )}
           </div>

@@ -8,6 +8,7 @@ import './styles/videoPlayer.css';
 import './styles/videoPlayer-episodesSelector.css';
 import './styles/animeDetails.css';
 import './styles/franchise.css';
+import './styles/favorites.css';
 
 import { PAGES } from './utils/api';
 import Header from './components/Header/Header';
@@ -17,6 +18,7 @@ import Search from './components/Pages/Search';
 import AnimeDetails from './components/Pages/AnimeDetails';
 import VideoPlayer from './components/VideoPlayer/VideoPlayer';
 import Franchises from './components/Pages/Franchises';
+import Favorites from './components/Pages/Favorites';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState(PAGES.HOME);
@@ -117,6 +119,8 @@ const App = () => {
           onAnimeClick={handleAnimeClick} 
           location={{ state: pageState }}
         />;
+      case PAGES.FAVORITES:
+        return <Favorites onAnimeClick={handleAnimeClick} />;
       case PAGES.HOME:
       default:
         return <Home 
