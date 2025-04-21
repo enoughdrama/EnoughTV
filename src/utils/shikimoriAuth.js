@@ -1,7 +1,7 @@
 const SHIKIMORI_BASE_URL = 'https://shikimori.one';
 const SHIKIMORI_API_URL = 'https://shikimori.one/api';
-const SHIKIMORI_CLIENT_ID = 'i5wBaXifc9SY9XCADriqiCYxWUlTu-OXfxZ1ZbE08do';
-const SHIKIMORI_CLIENT_SECRET = 'oItQOLtwQmCxj06slt5VLtIRyPoqWwlqM5pRMDLGoS8';
+const SHIKIMORI_CLIENT_ID = '';
+const SHIKIMORI_CLIENT_SECRET = '';
 const REDIRECT_URI = `${window.location.origin}/auth/callback`;
 
 const AUTH_STORAGE_KEY = 'anilibria_shikimori_auth';
