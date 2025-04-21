@@ -971,7 +971,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       
       const watchedPercentInSession = (watchedDuration / video.duration) * 100;
       const progressPercent = Math.floor((currentTime / video.duration) * 100);
-ƒ
+
       // Mark as having watched 5% if threshold reached
       if (watchedPercentInSession >= 5 && !hasWatchedFivePercent) {
         console.log("User has watched 5% of video, marking watched status as valid");
