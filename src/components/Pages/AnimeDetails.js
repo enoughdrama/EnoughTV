@@ -6,7 +6,8 @@ import {
   updateEpisodeProgress,
   getEpisodeProgressPercentage,
   findLastWatchedEpisode,
-  formatTimeMMSS
+  formatTimeMMSS,
+  isEpisodeWatched
 } from '../../utils/watchHistory';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -14,9 +15,11 @@ import {
   addAnimeToList, 
   updateUserRate, 
   getStatusDisplayName,
-  syncEpisodeProgress 
+  syncEpisodeProgress,
+  deleteUserRate
 } from '../../utils/shikimoriRates';
 import { getOrFindShikimoriId } from '../../utils/shikimoriMapping';
+import { toggleFavorite, isInFavorites } from '../../utils/favorites';
 import '../../styles/animeDetails.css';
 import '../../styles/shikimori-integration.css';
 
@@ -29,6 +32,7 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
   const [selectedEpisode, setSelectedEpisode] = useState(null);
   const [activeTab, setActiveTab] = useState('info');
   const [lastWatchedInfo, setLastWatchedInfo] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   
   // Shikimori integration
   const { isAuthenticated, currentUser } = useAuth();
@@ -36,6 +40,12 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
   const [shikimoriStatusId, setShikimoriStatusId] = useState(null);
   const [syncingShikimori, setSyncingShikimori] = useState(false);
   const [shikimoriId, setShikimoriId] = useState(null);
+  const [shikimoriAnimeInfo, setShikimoriAnimeInfo] = useState(null);
+  const [shikimoriEpisodes, setShikimoriEpisodes] = useState({}); // Map for episodes watched on Shikimori
+  const [showRatingPopup, setShowRatingPopup] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [updatingRating, setUpdatingRating] = useState(false);
+  
   const [settings, setSettings] = useState({
     syncHistory: false,
     publishActivity: false,
@@ -45,7 +55,7 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
 
   useEffect(() => {
     try {
-      const savedSettings = localStorage.getItem('anilibria_shikimori_settings');
+      const savedSettings = localStorage.getItem('enoughtv_shikimori_settings');
       if (savedSettings) {
         setSettings(JSON.parse(savedSettings));
       }
@@ -71,6 +81,9 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
           }
 
           fetchFranchiseData(data.id);
+          
+          // Check if anime is in favorites
+          setIsFavorite(isInFavorites(data.id));
         } else {
           setError('Аниме не найдено');
         }
@@ -93,6 +106,11 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
         try {
           const id = await getOrFindShikimoriId(anime);
           setShikimoriId(id);
+          
+          if (id && isAuthenticated && currentUser) {
+            // Fetch watched episodes data from Shikimori
+            fetchShikimoriAnimeInfo(id);
+          }
         } catch (error) {
           console.error('Failed to get Shikimori ID:', error);
         }
@@ -100,7 +118,7 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
     };
     
     fetchShikimoriId();
-  }, [anime]);
+  }, [anime, isAuthenticated, currentUser]);
 
   useEffect(() => {
     const checkShikimoriStatus = async () => {
@@ -110,9 +128,11 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
           if (userRate) {
             setShikimoriStatus(userRate.status);
             setShikimoriStatusId(userRate.id);
+            setSelectedRating(userRate.score || 0);
           } else {
             setShikimoriStatus(null);
             setShikimoriStatusId(null);
+            setSelectedRating(0);
           }
         } catch (error) {
           console.error('Failed to check Shikimori status:', error);
@@ -122,6 +142,47 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
 
     checkShikimoriStatus();
   }, [isAuthenticated, currentUser, anime, shikimoriId]);
+
+  const fetchShikimoriAnimeInfo = async (animeId) => {
+    if (!animeId || !isAuthenticated || !currentUser) return;
+    
+    try {
+      // Fetch user's watched episodes for this anime
+      const response = await fetch(`https://shikimori.one/api/v2/user_rates?user_id=${currentUser.id}&target_id=${animeId}&target_type=Anime`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch Shikimori user rates: ${response.status}`);
+      }
+      
+      const userRates = await response.json();
+      
+      if (userRates && userRates.length > 0) {
+        // Get anime details to check total episodes
+        const animeResponse = await fetch(`https://shikimori.one/api/animes/${animeId}`);
+        
+        if (!animeResponse.ok) {
+          throw new Error(`Failed to fetch Shikimori anime info: ${animeResponse.status}`);
+        }
+        
+        const animeInfo = await animeResponse.json();
+        setShikimoriAnimeInfo(animeInfo);
+        
+        // Get watched episodes
+        const userRate = userRates[0];
+        const watchedEpisodes = userRate.episodes || 0;
+        
+        // Create a map of watched episodes
+        const episodesMap = {};
+        for (let i = 1; i <= watchedEpisodes; i++) {
+          episodesMap[i] = true;
+        }
+        
+        setShikimoriEpisodes(episodesMap);
+      }
+    } catch (error) {
+      console.error('Failed to fetch Shikimori anime info:', error);
+    }
+  };
 
   const fetchFranchiseData = async (releaseId) => {
     setFranchiseLoading(true);
@@ -149,10 +210,70 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
         setShikimoriStatusId(result.id);
       }
       setShikimoriStatus(newStatus);
+      
+      // Refresh episodes data
+      await fetchShikimoriAnimeInfo(shikimoriId);
     } catch (error) {
       console.error('Failed to update Shikimori status:', error);
+      alert('Не удалось обновить статус на Shikimori. Пожалуйста, попробуйте снова позже.');
     } finally {
       setSyncingShikimori(false);
+    }
+  };
+
+  const handleRemoveFromShikimori = async () => {
+    if (!isAuthenticated || !currentUser || !shikimoriStatusId) return;
+    
+    if (window.confirm('Вы уверены, что хотите удалить это аниме из вашего списка Shikimori?')) {
+      setSyncingShikimori(true);
+      try {
+        await deleteUserRate(shikimoriStatusId);
+        setShikimoriStatus(null);
+        setShikimoriStatusId(null);
+        setSelectedRating(0);
+        setShikimoriEpisodes({});
+        alert('Аниме успешно удалено из списка Shikimori');
+      } catch (error) {
+        console.error('Failed to remove anime from Shikimori:', error);
+        alert('Не удалось удалить аниме из списка Shikimori. Пожалуйста, попробуйте снова позже.');
+      } finally {
+        setSyncingShikimori(false);
+      }
+    }
+  };
+
+  const handleRatingChange = async (rating) => {
+    if (!isAuthenticated || !currentUser || !shikimoriId) return;
+    
+    setUpdatingRating(true);
+    try {
+      if (shikimoriStatusId) {
+        await updateUserRate(shikimoriStatusId, { score: rating });
+        setSelectedRating(rating);
+      } else {
+        // If not in list yet, add with default "watching" status
+        const result = await addAnimeToList(currentUser.id, shikimoriId, 'watching');
+        setShikimoriStatusId(result.id);
+        setShikimoriStatus('watching');
+        
+        // Then update the rating
+        await updateUserRate(result.id, { score: rating });
+        setSelectedRating(rating);
+      }
+      
+      setShowRatingPopup(false);
+    } catch (error) {
+      console.error('Failed to update rating:', error);
+      alert('Не удалось обновить оценку на Shikimori. Пожалуйста, попробуйте снова позже.');
+    } finally {
+      setUpdatingRating(false);
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    if (anime) {
+      const result = toggleFavorite(anime);
+      setIsFavorite(result);
     }
   };
 
@@ -185,12 +306,20 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
     const syncWithShikimori = settings?.syncHistory;
     if (syncWithShikimori && isAuthenticated && currentUser && anime && shikimoriId) {
       try {
-        syncEpisodeProgress(
-          currentUser.id, 
-          shikimoriId, 
-          episode.ordinal, 
-          anime.episodes_total
-        );
+        const progress = getEpisodeProgressPercentage(animeId, episode.id);
+        if (progress >= 90 || isEpisodeWatched(animeId, episode.id)) {
+          syncEpisodeProgress(
+            currentUser.id, 
+            shikimoriId, 
+            episode.ordinal, 
+            anime.episodes_total
+          );
+          
+          // Update local state for Shikimori episodes
+          setTimeout(async () => {
+            await fetchShikimoriAnimeInfo(shikimoriId);
+          }, 1000);
+        }
       } catch (error) {
         console.error('Failed to sync with Shikimori:', error);
       }
@@ -210,6 +339,24 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
     if (minutes > 0 && days === 0) result += `${minutes} ${minutes === 1 ? 'минута' : 'минут'}`;
 
     return result.trim();
+  };
+
+  // Get score color based on rating value
+  const getScoreColor = (score) => {
+    const colors = [
+      '#c13a3a', // 1
+      '#d84939', // 2
+      '#e35a37', // 3
+      '#e97234', // 4
+      '#ed8934', // 5
+      '#e0a135', // 6
+      '#c2b135', // 7
+      '#98b344', // 8
+      '#75b366', // 9
+      '#4c8dc3'  // 10
+    ];
+    
+    return score > 0 && score <= 10 ? colors[score - 1] : '#6c757d';
   };
 
   if (loading) {
@@ -254,6 +401,11 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
     return anime.description.split('\r\n').map((paragraph, idx) => (
       <p key={idx}>{paragraph}</p>
     ));
+  };
+
+  // Check if episode is watched on Shikimori based on ordinal
+  const isEpisodeWatchedOnShikimori = (episodeOrdinal) => {
+    return !!shikimoriEpisodes[episodeOrdinal];
   };
 
   return (
@@ -389,6 +541,44 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                     С начала
                   </motion.button>
                 )}
+                
+                <motion.button
+                  className={`button secondary-button favorite-button ${isFavorite ? 'active' : ''}`}
+                  onClick={handleToggleFavorite}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: isFavorite ? 'rgba(220, 38, 38, 0.8)' : 'rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill={isFavorite ? "currentColor" : "none"} xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {isFavorite ? 'В избранном' : 'Добавить в избранное'}
+                </motion.button>
+                
+                {isAuthenticated && shikimoriId && (
+                  <motion.button
+                    className="button secondary-button"
+                    onClick={() => setShowRatingPopup(true)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px',
+                      backgroundColor: selectedRating > 0 ? getScoreColor(selectedRating) : undefined
+                    }}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {selectedRating > 0 ? `Моя оценка: ${selectedRating}` : 'Оценить'}
+                  </motion.button>
+                )}
               </motion.div>
             )}
             
@@ -408,7 +598,7 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                   Статус на Shikimori:
                 </div>
                 <div className="shikimori-status-buttons">
-                  {['planned', 'watching', 'completed', 'on_hold', 'dropped'].map((status) => (
+                  {['planned', 'watching', 'rewatching', 'completed', 'on_hold', 'dropped'].map((status) => (
                     <motion.button
                       key={status}
                       className={`shikimori-status-button ${shikimoriStatus === status ? 'active' : ''}`}
@@ -422,6 +612,31 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                     </motion.button>
                   ))}
                 </div>
+                
+                {shikimoriStatus && (
+                  <motion.button
+                    className="button secondary-button"
+                    onClick={handleRemoveFromShikimori}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{ 
+                      marginTop: '10px',
+                      backgroundColor: 'rgba(193, 58, 58, 0.2)',
+                      color: '#c13a3a',
+                      borderColor: 'rgba(193, 58, 58, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 12px'
+                    }}
+                    disabled={syncingShikimori}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                      <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    Удалить из списка
+                  </motion.button>
+                )}
               </motion.div>
             )}
           </div>
@@ -565,14 +780,41 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
               {anime.episodes && anime.episodes.length > 0 ? (
                 <div className="episodes-list">
                   {anime.episodes.map((episode, index) => (
-                    <EpisodeItem
-                      key={episode.id}
-                      episode={episode}
-                      selectedEpisode={selectedEpisode}
-                      onSelectEpisode={handleWatchEpisode}
-                      index={index}
-                      animeId={animeId}
-                    />
+                    <div key={episode.id} style={{ position: 'relative' }}>
+                      {isEpisodeWatchedOnShikimori(episode.ordinal) && (
+                        <div 
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            background: 'rgba(75, 106, 160, 0.9)',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold',
+                            zIndex: 5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <img 
+                            src="https://shikimori.one/favicons/favicon-16x16.png" 
+                            alt="Shikimori" 
+                            style={{ width: '12px', height: '12px' }}
+                          />
+                          Просмотрен
+                        </div>
+                      )}
+                      <EpisodeItem
+                        episode={episode}
+                        selectedEpisode={selectedEpisode}
+                        onSelectEpisode={handleWatchEpisode}
+                        index={index}
+                        animeId={animeId}
+                      />
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -699,6 +941,156 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Rating Popup */}
+      {showRatingPopup && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowRatingPopup(false)}
+        >
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'rgba(30, 30, 40, 0.95)',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '90%',
+              width: '400px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.25)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)'
+            }}
+          >
+            <h3 
+              style={{ 
+                textAlign: 'center', 
+                marginTop: 0, 
+                marginBottom: '20px',
+                fontSize: '1.25rem',
+                fontWeight: 600
+              }}
+            >
+              Оценить аниме на Shikimori
+            </h3>
+            
+            <div 
+              style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                gap: '8px', 
+                marginBottom: '20px',
+                flexWrap: 'wrap'
+              }}
+            >
+              {[...Array(10)].map((_, i) => (
+                <motion.button
+                  key={i + 1}
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: selectedRating === i + 1 ? getScoreColor(i + 1) : 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  onClick={() => handleRatingChange(i + 1)}
+                  disabled={updatingRating}
+                >
+                  {i + 1}
+                </motion.button>
+              ))}
+            </div>
+            
+            <div 
+              style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                marginTop: '20px',
+              }}
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'transparent',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setShowRatingPopup(false)}
+              >
+                Отмена
+              </motion.button>
+              
+              {selectedRating > 0 && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'rgba(193, 58, 58, 0.8)',
+                    color: 'white',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                  onClick={() => handleRatingChange(0)}
+                  disabled={updatingRating}
+                >
+                  {updatingRating ? (
+                    <span 
+                      style={{ 
+                        display: 'inline-block',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        borderTopColor: 'white',
+                        animation: 'spin 1s linear infinite'
+                      }}
+                    />
+                  ) : (
+                    <>
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      Убрать оценку
+                    </>
+                  )}
+                </motion.button>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.main>
   );
 };

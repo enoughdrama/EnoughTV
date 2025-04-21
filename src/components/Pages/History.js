@@ -17,13 +17,13 @@ const History = ({ onAnimeClick }) => {
             setLoading(true);
             try {
                 // Get from localStorage first
-                const localHistory = JSON.parse(localStorage.getItem('anilibria_watch_history') || '{}');
+                const localHistory = JSON.parse(localStorage.getItem('enoughtv_watch_history') || '{}');
 
                 if (isAuthenticated) {
                     // If authenticated, fetch from server and merge with local
                     const response = await fetch('https://api.example.com/api/watch-history', {
                         headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('anilibriaToken')}`
+                            'Authorization': `Bearer ${localStorage.getItem('enoughtvToken')}`
                         }
                     });
 
@@ -69,14 +69,14 @@ const History = ({ onAnimeClick }) => {
     const handleClearHistory = async () => {
         if (alert('Вы уверены, что хотите очистить всю историю просмотров?')) {
             try {
-                localStorage.removeItem('anilibria_watch_history');
+                localStorage.removeItem('enoughtv_watch_history');
 
                 if (isAuthenticated) {
                     // Clear on server too
                     await fetch('https://api.example.com/api/watch-history', {
                         method: 'DELETE',
                         headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('anilibriaToken')}`
+                            'Authorization': `Bearer ${localStorage.getItem('enoughtvToken')}`
                         }
                     });
                 }

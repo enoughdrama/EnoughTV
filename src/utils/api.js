@@ -1,6 +1,6 @@
 
-const API_BASE_URL = 'https://anilibria.wtf/api/v1';
-const SITE_URL = 'https://anilibria.wtf';
+const API_BASE_URL = 'https://enoughtv.wtf/api/v1';
+const SITE_URL = 'https://enoughtv.wtf';
 
 export const fixImagePath = (path) => {
   if (!path) return '';

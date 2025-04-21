@@ -1,4 +1,4 @@
-.anilibria-player-container {
+.enoughtv-player-container {
   --player-primary-color: #6366f1;
   --player-primary-hover: #4f46e5;
   --player-primary-glow: rgba(99, 102, 241, 0.5);
@@ -29,11 +29,11 @@
   transition: opacity 0.3s ease;
 }
 
-.anilibria-player-container.ui-ready {
+.enoughtv-player-container.ui-ready {
   opacity: 1;
 }
 
-.anilibria-player {
+.enoughtv-player {
   position: relative;
   width: 100%;
   max-width: 1280px;
@@ -46,7 +46,7 @@
   cursor: pointer;
 }
 
-.anilibria-player video {
+.enoughtv-player video {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -54,11 +54,11 @@
   transition: opacity 0.3s ease;
 }
 
-.anilibria-player video.loading {
+.enoughtv-player video.loading {
   opacity: 0.5;
 }
 
-.anilibria-player-quality-wrapper {
+.enoughtv-player-quality-wrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -66,12 +66,12 @@
   min-width: 80px;
 }
 
-.anilibria-player-quality-menu {
+.enoughtv-player-quality-menu {
   position: relative;
   margin-right: 8px;
 }
 
-.anilibria-player-quality-button {
+.enoughtv-player-quality-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,18 +91,18 @@
   position: relative;
 }
 
-.anilibria-player-quality-button:hover {
+.enoughtv-player-quality-button:hover {
   background-color: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
-.anilibria-player-quality-button:disabled {
+.enoughtv-player-quality-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.anilibria-player-quality-button.loading {
+.enoughtv-player-quality-button.loading {
   min-width: 80px;
 }
 
@@ -129,7 +129,7 @@
   }
 }
 
-.anilibria-player-quality-icon {
+.enoughtv-player-quality-icon {
   margin-left: 6px;
   display: flex;
   align-items: center;
@@ -137,16 +137,16 @@
   transition: transform 0.2s ease;
 }
 
-.anilibria-player-quality-icon.active {
+.enoughtv-player-quality-icon.active {
   transform: rotate(180deg);
 }
 
-.anilibria-player-quality-icon svg {
+.enoughtv-player-quality-icon svg {
   width: 14px;
   height: 14px;
 }
 
-.anilibria-player-quality-dropdown {
+.enoughtv-player-quality-dropdown {
   position: absolute;
   bottom: calc(100% + 8px);
   right: 0;
@@ -162,7 +162,7 @@
   transform-origin: bottom right;
 }
 
-.anilibria-player-quality-option {
+.enoughtv-player-quality-option {
   padding: 10px 16px;
   font-size: 14px;
   color: white;
@@ -175,11 +175,11 @@
   overflow: hidden;
 }
 
-.anilibria-player-quality-option:hover {
+.enoughtv-player-quality-option:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.anilibria-player-quality-option:hover::after {
+.enoughtv-player-quality-option:hover::after {
   content: "";
   position: absolute;
   top: 0;
@@ -199,12 +199,12 @@
   }
 }
 
-.anilibria-player-quality-option.active {
+.enoughtv-player-quality-option.active {
   color: var(--player-primary-color);
   background-color: rgba(99, 102, 241, 0.1);
 }
 
-.anilibria-player-quality-option .quality-check {
+.enoughtv-player-quality-option .quality-check {
   width: 16px;
   height: 16px;
   display: flex;
@@ -212,12 +212,12 @@
   justify-content: center;
 }
 
-.anilibria-player-quality-option .quality-check svg {
+.enoughtv-player-quality-option .quality-check svg {
   width: 14px;
   height: 14px;
 }
 
-.anilibria-player-control-container {
+.enoughtv-player-control-container {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -236,7 +236,7 @@
   will-change: opacity, transform;
 }
 
-.anilibria-player-controls-wrapper {
+.enoughtv-player-controls-wrapper {
   display: flex;
   align-items: center;
   width: 100%;
@@ -244,13 +244,13 @@
   gap: 15px;
 }
 
-.anilibria-player:hover .anilibria-player-control-container,
-.anilibria-player-control-container.active {
+.enoughtv-player:hover .enoughtv-player-control-container,
+.enoughtv-player-control-container.active {
   opacity: 1;
   transform: translateY(0);
 }
 
-.anilibria-player-progress-container {
+.enoughtv-player-progress-container {
   flex: 1;
   display: flex;
   align-items: center;
@@ -258,15 +258,15 @@
   position: relative;
 }
 
-.anilibria-player-control-button.close-button {
+.enoughtv-player-control-button.close-button {
   background-color: rgba(239, 68, 68, 0.2);
 }
 
-.anilibria-player-control-button.close-button:hover {
+.enoughtv-player-control-button.close-button:hover {
   background-color: rgba(239, 68, 68, 0.4);
 }
 
-.anilibria-player-progress-bar {
+.enoughtv-player-progress-bar {
   flex: 1;
   height: var(--player-slider-height);
   background-color: rgba(255, 255, 255, 0.2);
@@ -278,11 +278,11 @@
   transition: height 0.2s ease;
 }
 
-.anilibria-player-progress-bar.active {
+.enoughtv-player-progress-bar.active {
   height: var(--player-slider-height);
 }
 
-.anilibria-player-progress-fill {
+.enoughtv-player-progress-fill {
   height: 100%;
   width: 0%;
   background-color: var(--player-primary-color);
@@ -296,7 +296,7 @@
   will-change: width;
 }
 
-.anilibria-player-buffer-bar {
+.enoughtv-player-buffer-bar {
   height: 100%;
   width: 0%;
   background-color: rgba(255, 255, 255, 0.3);
@@ -308,7 +308,7 @@
   will-change: width;
 }
 
-.anilibria-player-progress-thumb {
+.enoughtv-player-progress-thumb {
   position: absolute;
   width: 16px;
   height: 16px;
@@ -323,12 +323,12 @@
   transition: transform 0.2s ease;
 }
 
-.anilibria-player-progress-container:hover .anilibria-player-progress-thumb,
-.anilibria-player-progress-bar.active .anilibria-player-progress-thumb {
+.enoughtv-player-progress-container:hover .enoughtv-player-progress-thumb,
+.enoughtv-player-progress-bar.active .enoughtv-player-progress-thumb {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.anilibria-player-progress-hover-time {
+.enoughtv-player-progress-hover-time {
   position: absolute;
   top: -30px;
   transform: translateX(-50%);
@@ -345,7 +345,7 @@
   white-space: nowrap;
 }
 
-.anilibria-player-progress-hover-time::after {
+.enoughtv-player-progress-hover-time::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -356,7 +356,7 @@
   border-color: var(--player-primary-color) transparent transparent transparent;
 }
 
-.anilibria-player-control-button {
+.enoughtv-player-control-button {
   width: var(--player-control-size);
   height: var(--player-control-size);
   border-radius: 50%;
@@ -375,26 +375,26 @@
   transform: scale(1);
 }
 
-.anilibria-player-control-button:hover {
+.enoughtv-player-control-button:hover {
   background-color: rgba(255, 255, 255, 0.25);
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
-.anilibria-player-control-button:active {
+.enoughtv-player-control-button:active {
   transform: scale(0.95);
   background-color: rgba(255, 255, 255, 0.2);
   transition: transform 0.1s ease, background-color 0.1s ease;
 }
 
-.anilibria-player-control-button svg {
+.enoughtv-player-control-button svg {
   width: 24px;
   height: 24px;
   fill: white;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-.anilibria-player-time-display {
+.enoughtv-player-time-display {
   color: white;
   font-size: 14px;
   font-weight: 500;
@@ -404,14 +404,14 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.anilibria-player-volume-container {
+.enoughtv-player-volume-container {
   display: flex;
   align-items: center;
   position: relative;
   margin-right: 5px;
 }
 
-.anilibria-player-volume-container::after {
+.enoughtv-player-volume-container::after {
   content: '';
   position: absolute;
   bottom: 100%;
@@ -422,7 +422,7 @@
   z-index: 15;
 }
 
-.anilibria-player-volume-slider-container {
+.enoughtv-player-volume-slider-container {
   position: absolute;
   bottom: calc(100% + 10px);
   left: 50%;
@@ -445,13 +445,13 @@
   will-change: transform, height, opacity;
 }
 
-.anilibria-player-volume-container:hover .anilibria-player-volume-slider-container {
+.enoughtv-player-volume-container:hover .enoughtv-player-volume-slider-container {
   transform: translateX(-50%) scaleY(1);
   height: 120px;
   opacity: 1;
 }
 
-.anilibria-player-volume-slider {
+.enoughtv-player-volume-slider {
   width: var(--player-slider-height-hover);
   height: 100px;
   background-color: transparent;
@@ -461,7 +461,7 @@
   overflow: visible;
 }
 
-.anilibria-player-volume-level {
+.enoughtv-player-volume-level {
   width: 100%;
   background-color: var(--player-primary-color);
   border-radius: var(--player-slider-height-hover);
@@ -473,11 +473,11 @@
   will-change: height;
 }
 
-.anilibria-player-thumbnail-preview {
+.enoughtv-player-thumbnail-preview {
   display: none;
 }
 
-.anilibria-player-thumbnail-preview::after {
+.enoughtv-player-thumbnail-preview::after {
   content: '';
   position: absolute;
   bottom: -10px;
@@ -490,13 +490,13 @@
   border-top: 10px solid var(--player-primary-color);
 }
 
-.anilibria-player-thumbnail-image {
+.enoughtv-player-thumbnail-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.anilibria-player-video-title {
+.enoughtv-player-video-title {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -512,13 +512,13 @@
   will-change: opacity, transform;
 }
 
-.anilibria-player:hover .anilibria-player-video-title,
-.anilibria-player-video-title.visible {
+.enoughtv-player:hover .enoughtv-player-video-title,
+.enoughtv-player-video-title.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.anilibria-player-spinner {
+.enoughtv-player-spinner {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -555,7 +555,7 @@
   border: 4px solid rgba(99, 102, 241, 0.1);
   border-top: 4px solid rgba(99, 102, 241, 0);
   border-right: 4px solid rgba(99, 102, 241, 0);
-  animation: anilibria-player-spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+  animation: enoughtv-player-spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
   box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
 }
 
@@ -565,7 +565,7 @@
   border: 4px solid rgba(99, 102, 241, 0);
   border-bottom: 4px solid rgba(64, 67, 221, 0.8);
   border-left: 4px solid rgba(64, 67, 221, 0.8);
-  animation: anilibria-player-spin-reverse 1s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation: enoughtv-player-spin-reverse 1s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
   box-shadow: 0 0 10px rgba(64, 67, 221, 0.5);
 }
 
@@ -579,10 +579,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 0 15px var(--player-primary-glow);
-  animation: anilibria-player-pulse 1.5s ease-in-out infinite;
+  animation: enoughtv-player-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes anilibria-player-spin {
+@keyframes enoughtv-player-spin {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
@@ -591,7 +591,7 @@
   }
 }
 
-@keyframes anilibria-player-spin-reverse {
+@keyframes enoughtv-player-spin-reverse {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
@@ -600,7 +600,7 @@
   }
 }
 
-@keyframes anilibria-player-pulse {
+@keyframes enoughtv-player-pulse {
   0%, 100% {
     transform: translate(-50%, -50%) scale(0.8);
     opacity: 0.7;
@@ -611,7 +611,7 @@
   }
 }
 
-.anilibria-player-big-play-button {
+.enoughtv-player-big-play-button {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -634,23 +634,23 @@
   will-change: transform, opacity;
 }
 
-.anilibria-player-big-play-button.visible {
+.enoughtv-player-big-play-button.visible {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-.anilibria-player-big-play-button:hover {
+.enoughtv-player-big-play-button:hover {
   box-shadow: 0 5px 30px rgba(0, 0, 0, 0.7), 0 0 40px var(--player-primary-glow);
 }
 
-.anilibria-player-big-play-button svg {
+.enoughtv-player-big-play-button svg {
   width: 40px;
   height: 40px;
   fill: white;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
 
-.anilibria-player-top-gradient {
+.enoughtv-player-top-gradient {
   position: absolute;
   top: 0;
   left: 0;
@@ -664,13 +664,13 @@
   will-change: opacity, transform;
 }
 
-.anilibria-player:hover .anilibria-player-top-gradient,
-.anilibria-player-top-gradient.visible {
+.enoughtv-player:hover .enoughtv-player-top-gradient,
+.enoughtv-player-top-gradient.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.anilibria-player-error {
+.enoughtv-player-error {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -684,7 +684,7 @@
   z-index: 20;
 }
 
-.anilibria-player-error-icon {
+.enoughtv-player-error-icon {
   width: 80px;
   height: 80px;
   display: flex;
@@ -694,23 +694,23 @@
   color: var(--player-error-color);
 }
 
-.anilibria-player-error-icon svg {
+.enoughtv-player-error-icon svg {
   width: 64px;
   height: 64px;
 }
 
-.anilibria-player-error p {
+.enoughtv-player-error p {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 16px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.anilibria-player-error .button {
+.enoughtv-player-error .button {
   margin-top: 24px;
 }
 
-.anilibria-player-error .primary-button {
+.enoughtv-player-error .primary-button {
   background-color: var(--player-primary-color);
   color: white;
   border: none;
@@ -723,12 +723,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.anilibria-player-error .primary-button:hover {
+.enoughtv-player-error .primary-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
-.anilibria-player-keyboard-shortcuts {
+.enoughtv-player-keyboard-shortcuts {
   position: absolute;
   bottom: 90px;
   left: 50%;
@@ -750,13 +750,13 @@
   will-change: transform, opacity;
 }
 
-.anilibria-player-keyboard-shortcuts.visible {
+.enoughtv-player-keyboard-shortcuts.visible {
   opacity: 1;
   transform: translateX(-50%) scale(1);
   pointer-events: auto;
 }
 
-.anilibria-player-keyboard-shortcuts h3 {
+.enoughtv-player-keyboard-shortcuts h3 {
   font-size: 16px;
   margin-bottom: 16px;
   text-align: center;
@@ -764,14 +764,14 @@
   color: var(--player-primary-color);
 }
 
-.anilibria-player-shortcut-grid {
+.enoughtv-player-shortcut-grid {
   display: grid;
   grid-template-columns: auto 1fr;
   grid-gap: 10px 16px;
   font-size: 14px;
 }
 
-.anilibria-player-key {
+.enoughtv-player-key {
   font-family: -apple-system, monospace;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -786,7 +786,7 @@
   -webkit-backdrop-filter: blur(5px);
 }
 
-.anilibria-player-volume-popup {
+.enoughtv-player-volume-popup {
   position: absolute;
   right: -70px;
   top: 50%;
@@ -807,118 +807,118 @@
   will-change: transform, opacity;
 }
 
-.anilibria-player-volume-popup.active {
+.enoughtv-player-volume-popup.active {
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
 
 @media (max-width: 768px) {
-  .anilibria-player {
+  .enoughtv-player {
     max-width: 100%;
     border-radius: 0;
   }
 
-  .anilibria-player-control-container {
+  .enoughtv-player-control-container {
     padding: 15px 10px;
   }
 
-  .anilibria-player-time-display {
+  .enoughtv-player-time-display {
     min-width: auto;
     font-size: 12px;
   }
 
-  .anilibria-player-volume-slider-container {
+  .enoughtv-player-volume-slider-container {
     left: 0;
     transform: translateX(0) scaleY(0);
   }
 
-  .anilibria-player-volume-container:hover .anilibria-player-volume-slider-container {
+  .enoughtv-player-volume-container:hover .enoughtv-player-volume-slider-container {
     transform: translateX(0) scaleY(1);
   }
 
-  .anilibria-player-controls-wrapper {
+  .enoughtv-player-controls-wrapper {
     gap: 10px;
   }
 
-  .anilibria-player-control-button {
+  .enoughtv-player-control-button {
     width: 40px;
     height: 40px;
   }
 
-  .anilibria-player-control-button svg {
+  .enoughtv-player-control-button svg {
     width: 20px;
     height: 20px;
   }
 
-  .anilibria-player-keyboard-shortcuts {
+  .enoughtv-player-keyboard-shortcuts {
     width: 90%;
     padding: 15px;
   }
 
-  .anilibria-player-shortcut-grid {
+  .enoughtv-player-shortcut-grid {
     grid-gap: 8px 12px;
     font-size: 12px;
   }
 
-  .anilibria-player-quality-button {
+  .enoughtv-player-quality-button {
     padding: 4px 12px;
     font-size: 12px;
     min-width: 70px;
   }
 
-  .anilibria-player-thumbnail-preview {
+  .enoughtv-player-thumbnail-preview {
     width: 160px;
     height: 90px;
   }
 
-  .anilibria-player-video-title {
+  .enoughtv-player-video-title {
     font-size: 16px;
     max-width: 70%;
   }
 
-  .anilibria-player-spinner {
+  .enoughtv-player-spinner {
     width: 60px;
     height: 60px;
   }
 }
 
 @media (max-width: 480px) {
-  .anilibria-player-controls-wrapper {
+  .enoughtv-player-controls-wrapper {
     gap: 6px;
   }
 
-  .anilibria-player-control-button {
+  .enoughtv-player-control-button {
     width: 36px;
     height: 36px;
   }
 
-  .anilibria-player-control-button svg {
+  .enoughtv-player-control-button svg {
     width: 18px;
     height: 18px;
   }
 
-  .anilibria-player-time-display {
+  .enoughtv-player-time-display {
     font-size: 11px;
   }
 
-  .anilibria-player-quality-button {
+  .enoughtv-player-quality-button {
     padding: 4px 8px;
     font-size: 11px;
     min-width: 60px;
   }
 
-  .anilibria-player-thumbnail-preview {
+  .enoughtv-player-thumbnail-preview {
     width: 120px;
     height: 68px;
     top: -90px;
   }
 
-  .anilibria-player-video-title {
+  .enoughtv-player-video-title {
     font-size: 14px;
     max-width: 60%;
   }
 
-  .anilibria-player-spinner {
+  .enoughtv-player-spinner {
     width: 50px;
     height: 50px;
   }

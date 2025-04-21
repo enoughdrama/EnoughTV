@@ -12,7 +12,14 @@ import {
 } from '../../utils/watchHistory';
 import '../../styles/episode-list.css';
 
-const EpisodeItem = ({ episode, selectedEpisode, onSelectEpisode, index, animeId }) => {
+const EpisodeItem = ({ 
+  episode, 
+  selectedEpisode, 
+  onSelectEpisode, 
+  index, 
+  animeId,
+  isWatchedOnShikimori = false 
+}) => {
   const isSelected = selectedEpisode && selectedEpisode.id === episode.id;
 
   // Fix image path
@@ -31,16 +38,16 @@ const EpisodeItem = ({ episode, selectedEpisode, onSelectEpisode, index, animeId
 
   // Display a "NEW" tag for episodes added within the last 7 days
   // This is a placeholder since we don't have actual release dates
-  const isRecentlyAdded = index < 3; // Just for demo, mark first 3 episodes as new
+  const isRecentlyAdded = episode.updated_at && 
+    (new Date() - new Date(episode.updated_at)) / (1000 * 60 * 60 * 24) < 7;
 
   const handleEpisodeClick = () => {
-    // When user clicks on the episode, update localStorage and call the parent handler
-    if (!isWatched) {
-      markEpisodeAsWatched(animeId, episode.id);
-    }
-
+    // When user clicks on the episode, call the parent handler
     onSelectEpisode(episode);
   };
+
+  // Determine if we should show "Watched on Shikimori" badge
+  const hasShikimoriBadge = isWatchedOnShikimori && !isWatched && !isInProgress;
 
   return (
     <motion.div
@@ -76,6 +83,18 @@ const EpisodeItem = ({ episode, selectedEpisode, onSelectEpisode, index, animeId
             {Math.floor(episode.duration / 60)}:{(episode.duration % 60).toString().padStart(2, '0')}
           </div>
         )}
+        
+        {hasShikimoriBadge && (
+          <div className="episode-shikimori-badge">
+            <img 
+              src="https://shikimori.one/favicons/favicon-16x16.png" 
+              alt="Shikimori" 
+              width="12" 
+              height="12"
+            />
+            <span>Shikimori</span>
+          </div>
+        )}
       </div>
       <div className="episode-content">
         <div className="episode-title">{episode.name || `Эпизод ${episode.ordinal}`}</div>
@@ -88,9 +107,9 @@ const EpisodeItem = ({ episode, selectedEpisode, onSelectEpisode, index, animeId
                 <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               )}
             </svg>
-            {isWatched ? 'Просмотрено' : isInProgress ? `Просмотрено ${watchProgress}%` : 'Не просмотрено'}
+            {isWatched ? 'Просмотрено' : isInProgress ? `Просмотрено ${watchProgress}%` : isWatchedOnShikimori ? 'Просмотрено на Shikimori' : 'Не просмотрено'}
           </div>
-          {isRecentlyAdded && !isWatched && (
+          {isRecentlyAdded && !isWatched && !isWatchedOnShikimori && (
             <div className="episode-status new">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

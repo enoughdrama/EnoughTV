@@ -43,6 +43,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   const [hasAttemptedPlay, setHasAttemptedPlay] = useState(false);
   const [recoveryAttempts, setRecoveryAttempts] = useState(0);
   const [uiReady, setUiReady] = useState(false);
+  const [hasWatchedFivePercent, setHasWatchedFivePercent] = useState(false);
 
   const [targetTime, setTargetTime] = useState(null);
   const [isWaitingForSeek, setIsWaitingForSeek] = useState(false);
@@ -80,11 +81,14 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   const skippedSegmentsRef = useRef(new Set());
   const seekRetryTimeoutRef = useRef(null);
   const seekRetryCountRef = useRef(0);
+  const initialTimeRef = useRef(0);
+  const watchedDurationRef = useRef(0);
 
   const isInOpeningRef = useRef(false);
   const isInEndingRef = useRef(false);
   const checkForOpeningEndingRef = useRef(() => { });
   const isSeekingRef = useRef(false);
+  const previousEpisodeIdRef = useRef(null);
 
   const sortedEpisodes = [...(allEpisodes || [])].sort((a, b) => a.ordinal - b.ordinal);
 
@@ -279,7 +283,25 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
   useEffect(() => {
     if (currentEpisode && currentEpisode.id !== episode?.id) {
+      // Handling episode change
+      if (previousEpisodeIdRef.current && animeId) {
+        // Save progress for previous episode if at least 5% was watched
+        if (hasWatchedFivePercent) {
+          const video = videoRef.current;
+          if (video && video.duration) {
+            const progressPercent = Math.floor((video.currentTime / video.duration) * 100);
+            if (progressPercent >= 5 && progressPercent < 95) {
+              updateEpisodeProgress(animeId, previousEpisodeIdRef.current, progressPercent, false);
+            } else if (progressPercent >= 95) {
+              updateEpisodeProgress(animeId, previousEpisodeIdRef.current, 100, true);
+            }
+          }
+        }
+      }
+      
+      // Reset for new episode
       setCurrentEpisode(episode);
+      previousEpisodeIdRef.current = episode?.id;
       savedTimeRef.current = null;
       timeUpdateInitializedRef.current = false;
       startTimeAppliedRef.current = false;
@@ -289,8 +311,11 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       bufferHoleRecoveryRef.current = false;
       resetSkipState();
       skippedSegmentsRef.current = new Set();
+      setHasWatchedFivePercent(false);
+      initialTimeRef.current = 0;
+      watchedDurationRef.current = 0;
     }
-  }, [episode]);
+  }, [episode, hasWatchedFivePercent, animeId]);
 
   const getHlsUrls = () => {
     if (!currentEpisode) return {};
@@ -472,6 +497,11 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
     if (!hasAttemptedPlay) {
       attemptPlay();
+    }
+    
+    // Store initial time when video is ready
+    if (videoRef.current) {
+      initialTimeRef.current = videoRef.current.currentTime;
     }
   };
 
@@ -921,29 +951,39 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       clearInterval(progressSaveIntervalRef.current);
     }
 
-    let hasWatchedFivePercent = false;
-    let initialTime = 0;
-
-    if (videoRef.current) {
-      initialTime = videoRef.current.currentTime;
+    // Reset tracking state for the new episode
+    setHasWatchedFivePercent(false);
+    watchedDurationRef.current = 0;
+    
+    const video = videoRef.current;
+    if (video) {
+      initialTimeRef.current = video.currentTime || 0;
     }
 
     progressSaveIntervalRef.current = setInterval(() => {
       const video = videoRef.current;
-      if (video && video.duration && animeId && currentEpisode?.id) {
-        const progressPercent = Math.floor((video.currentTime / video.duration) * 100);
-        const watchedInSession = Math.floor(((video.currentTime - initialTime) / video.duration) * 100);
+      if (!video || !video.duration || !animeId || !currentEpisode?.id) return;
 
-        if (watchedInSession >= 5) {
-          hasWatchedFivePercent = true;
-        }
+      // Calculate watched percentage in this session
+      const currentTime = video.currentTime;
+      const watchedDuration = Math.max(0, currentTime - initialTimeRef.current);
+      watchedDurationRef.current = watchedDuration;
+      
+      const watchedPercentInSession = (watchedDuration / video.duration) * 100;
+      const progressPercent = Math.floor((currentTime / video.duration) * 100);
+ƒ
+      // Mark as having watched 5% if threshold reached
+      if (watchedPercentInSession >= 5 && !hasWatchedFivePercent) {
+        console.log("User has watched 5% of video, marking watched status as valid");
+        setHasWatchedFivePercent(true);
+      }
 
-        if (hasWatchedFivePercent) {
-          if (progressPercent >= 5 && progressPercent < 95) {
-            updateEpisodeProgress(animeId, currentEpisode.id, progressPercent, false);
-          } else if (progressPercent >= 95) {
-            updateEpisodeProgress(animeId, currentEpisode.id, 100, true);
-          }
+      // Update progress only if user has watched at least 5%
+      if (hasWatchedFivePercent) {
+        if (progressPercent >= 5 && progressPercent < 95) {
+          updateEpisodeProgress(animeId, currentEpisode.id, progressPercent, false);
+        } else if (progressPercent >= 95) {
+          updateEpisodeProgress(animeId, currentEpisode.id, 100, true);
         }
       }
     }, 5000);
@@ -955,14 +995,16 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       progressSaveIntervalRef.current = null;
     }
 
+    // Final progress update when leaving the player
     const video = videoRef.current;
     if (video && video.duration && animeId && currentEpisode?.id) {
+      // Calculate watched percentage in this session
+      const watchedDuration = watchedDurationRef.current;
+      const watchedPercentInSession = (watchedDuration / video.duration) * 100;
       const progressPercent = Math.floor((video.currentTime / video.duration) * 100);
-      const initialTime = savedTimeRef.current ? savedTimeRef.current : 0;
-      const watchedInSession = video.currentTime - initialTime;
-      const watchedPercentInSession = Math.floor((watchedInSession / video.duration) * 100);
 
-      if (watchedPercentInSession >= 5) {
+      // Update progress only if user has watched at least 5%
+      if (hasWatchedFivePercent || watchedPercentInSession >= 5) {
         if (progressPercent >= 5 && progressPercent < 95) {
           updateEpisodeProgress(animeId, currentEpisode.id, progressPercent, false);
         } else if (progressPercent >= 95) {
@@ -988,6 +1030,21 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
           Math.abs(video.currentTime - currentEpisode.startTime) > 1 &&
           video.currentTime < 5) {
           video.currentTime = currentEpisode.startTime;
+        }
+      }
+
+      // Update watched duration for progress tracking
+      if (initialTimeRef.current !== undefined) {
+        const watchedDuration = Math.max(0, video.currentTime - initialTimeRef.current);
+        watchedDurationRef.current = watchedDuration;
+        
+        // Check if user has crossed the 5% watch threshold
+        if (video.duration) {
+          const watchedPercentInSession = (watchedDuration / video.duration) * 100;
+          if (watchedPercentInSession >= 5 && !hasWatchedFivePercent) {
+            console.log("User has watched 5% of video, marking watched status as valid");
+            setHasWatchedFivePercent(true);
+          }
         }
       }
 
@@ -1045,8 +1102,11 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     };
 
     const handleEnded = () => {
+      // When video ends, update progress to 100% only if we've watched at least 5%
       if (animeId && currentEpisode?.id) {
-        updateEpisodeProgress(animeId, currentEpisode.id, 100, true);
+        if (hasWatchedFivePercent) {
+          updateEpisodeProgress(animeId, currentEpisode.id, 100, true);
+        }
 
         if (autoplayEnabled && nextEpisode) {
           clearTimeout(nextEpisodeTimeoutRef.current);
@@ -1082,7 +1142,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       video.removeEventListener('seeking', handleSeeking);
       video.removeEventListener('seeked', handleSeek);
     };
-  }, [animeId, currentEpisode, nextEpisode, autoplayEnabled]);
+  }, [animeId, currentEpisode, nextEpisode, autoplayEnabled, hasWatchedFivePercent]);
 
   useEffect(() => {
     timeUpdateInitializedRef.current = false;
@@ -1283,8 +1343,8 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   };
 
   useEffect(() => {
-    const topGradient = document.querySelector('.anilibria-player-top-gradient');
-    const videoTitle = document.querySelector('.anilibria-player-video-title');
+    const topGradient = document.querySelector('.enoughtv-player-top-gradient');
+    const videoTitle = document.querySelector('.enoughtv-player-video-title');
 
     if (topGradient && videoTitle) {
       if (showControls) {
@@ -1304,6 +1364,9 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   const playNextEpisode = () => {
     if (!nextEpisode) return;
 
+    // Store previous episode ID before changing
+    previousEpisodeIdRef.current = currentEpisode?.id;
+    
     setCurrentEpisode(nextEpisode);
     setShowNextEpisodeNotification(false);
 
@@ -1318,6 +1381,9 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   };
 
   const switchToEpisode = (episode) => {
+    // Store previous episode ID before changing
+    previousEpisodeIdRef.current = currentEpisode?.id;
+    
     setCurrentEpisode(episode);
     setShowEpisodesPanel(false);
     clearTimeout(nextEpisodeTimeoutRef.current);
@@ -1325,7 +1391,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (showQualityMenu && !e.target.closest('.anilibria-player-quality-menu')) {
+      if (showQualityMenu && !e.target.closest('.enoughtv-player-quality-menu')) {
         setShowQualityMenu(false);
       }
     };
@@ -1493,33 +1559,33 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     console.log(`Rendering skip notification. Type: ${skipType}, isInOpening: ${isInOpeningRef.current}, isInEnding: ${isInEndingRef.current}`);
 
     return (
-      <div className="anilibria-player-skip-notification visible">
-        <div className="anilibria-player-skip-info">
-          <div className="anilibria-player-skip-icon">
+      <div className="enoughtv-player-skip-notification visible">
+        <div className="enoughtv-player-skip-info">
+          <div className="enoughtv-player-skip-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M13 5l7 7-7 7M5 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <div className="anilibria-player-skip-text">
-            <div className="anilibria-player-skip-title">
+          <div className="enoughtv-player-skip-text">
+            <div className="enoughtv-player-skip-title">
               {skipType === 'opening' ? 'Опенинг' : 'Эндинг'}
             </div>
-            <div className="anilibria-player-skip-subtitle">
+            <div className="enoughtv-player-skip-subtitle">
               Автопропуск через 5 секунд
             </div>
           </div>
         </div>
 
-        <div className="anilibria-player-skip-progress">
+        <div className="enoughtv-player-skip-progress">
           <div
-            className="anilibria-player-skip-progress-fill"
+            className="enoughtv-player-skip-progress-fill"
             style={{ width: `${skipProgress}%` }}
           ></div>
         </div>
 
-        <div className="anilibria-player-skip-buttons">
+        <div className="enoughtv-player-skip-buttons">
           <button
-            className="anilibria-player-skip-button"
+            className="enoughtv-player-skip-button"
             onClick={skipType === 'opening' ? skipOpening : skipEnding}
           >
             Пропустить
@@ -1528,7 +1594,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
             </svg>
           </button>
           <button
-            className="anilibria-player-watch-button"
+            className="enoughtv-player-watch-button"
             onClick={continueWatching}
           >
             Смотреть
@@ -1544,9 +1610,9 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     const qualityLabel = currentQuality || 'auto';
 
     return (
-      <div className="anilibria-player-quality-menu">
+      <div className="enoughtv-player-quality-menu">
         <motion.button
-          className={`anilibria-player-quality-button ${loadingQuality ? 'loading' : ''}`}
+          className={`enoughtv-player-quality-button ${loadingQuality ? 'loading' : ''}`}
           onClick={() => setShowQualityMenu(!showQualityMenu)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -1566,7 +1632,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
               </svg>
             </div>
           ) : qualityLabel}
-          <span className={`anilibria-player-quality-icon ${showQualityMenu ? 'active' : ''}`}>
+          <span className={`enoughtv-player-quality-icon ${showQualityMenu ? 'active' : ''}`}>
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -1576,7 +1642,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
         <AnimatePresence>
           {showQualityMenu && !loadingQuality && (
             <motion.div
-              className="anilibria-player-quality-dropdown"
+              className="enoughtv-player-quality-dropdown"
               initial={{ opacity: 0, y: 10, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.9 }}
@@ -1585,7 +1651,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
               {availableQualities.map(quality => (
                 <div
                   key={quality}
-                  className={`anilibria-player-quality-option ${currentQuality === quality ? 'active' : ''}`}
+                  className={`enoughtv-player-quality-option ${currentQuality === quality ? 'active' : ''}`}
                   onClick={() => handleQualityChange(quality)}
                 >
                   {quality}
@@ -1610,7 +1676,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
     return (
       <motion.button
-        className={`anilibria-player-episodes-button ${showControls ? 'visible' : ''}`}
+        className={`enoughtv-player-episodes-button ${showControls ? 'visible' : ''}`}
         onClick={() => setShowEpisodesPanel(!showEpisodesPanel)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -1627,11 +1693,11 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     if (!sortedEpisodes || sortedEpisodes.length <= 1) return null;
 
     return (
-      <div className={`anilibria-player-episodes-panel ${showEpisodesPanel ? 'visible' : ''}`}>
-        <div className="anilibria-player-episodes-header">
-          <div className="anilibria-player-episodes-title">Список эпизодов</div>
+      <div className={`enoughtv-player-episodes-panel ${showEpisodesPanel ? 'visible' : ''}`}>
+        <div className="enoughtv-player-episodes-header">
+          <div className="enoughtv-player-episodes-title">Список эпизодов</div>
           <button
-            className="anilibria-player-episodes-close"
+            className="enoughtv-player-episodes-close"
             onClick={() => setShowEpisodesPanel(false)}
           >
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1639,7 +1705,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
             </svg>
           </button>
         </div>
-        <div className="anilibria-player-episodes-list">
+        <div className="enoughtv-player-episodes-list">
           {sortedEpisodes.map(ep => {
             const isActive = currentEpisode.id === ep.id;
             const isWatched = isEpisodeWatched(animeId, ep.id);
@@ -1648,17 +1714,17 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
             return (
               <div
                 key={ep.id}
-                className={`anilibria-player-episode-item ${isActive ? 'active' : ''}`}
+                className={`enoughtv-player-episode-item ${isActive ? 'active' : ''}`}
                 onClick={() => switchToEpisode(ep)}
               >
-                <div className="anilibria-player-episode-number">{ep.ordinal}</div>
-                <div className="anilibria-player-episode-info">
-                  <div className="anilibria-player-episode-name">
+                <div className="enoughtv-player-episode-number">{ep.ordinal}</div>
+                <div className="enoughtv-player-episode-info">
+                  <div className="enoughtv-player-episode-name">
                     {ep.name || `Эпизод ${ep.ordinal}`}
                   </div>
-                  <div className="anilibria-player-episode-meta">
+                  <div className="enoughtv-player-episode-meta">
                     {ep.duration && (
-                      <div className="anilibria-player-episode-duration">
+                      <div className="enoughtv-player-episode-duration">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                           <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -1667,14 +1733,14 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
                       </div>
                     )}
                     {isWatched ? (
-                      <div className="anilibria-player-episode-status watched">
+                      <div className="enoughtv-player-episode-status watched">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                         Просмотрено
                       </div>
                     ) : isInProgress ? (
-                      <div className="anilibria-player-episode-status in-progress">
+                      <div className="enoughtv-player-episode-status in-progress">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M15.9998 12.0005H12.0005M12.0005 12.0005H8.00134M12.0005 12.0005V8.00134M12.0005 12.0005V15.9998M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -1687,26 +1753,26 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
             );
           })}
         </div>
-        <div className="anilibria-player-autoplay-toggle">
-          <span className="anilibria-player-autoplay-label">Автовоспроизведение</span>
-          <label className="anilibria-player-autoplay-switch">
+        <div className="enoughtv-player-autoplay-toggle">
+          <span className="enoughtv-player-autoplay-label">Автовоспроизведение</span>
+          <label className="enoughtv-player-autoplay-switch">
             <input
               type="checkbox"
               checked={autoplayEnabled}
               onChange={() => setAutoplayEnabled(!autoplayEnabled)}
             />
-            <span className="anilibria-player-autoplay-slider"></span>
+            <span className="enoughtv-player-autoplay-slider"></span>
           </label>
         </div>
-        <div className="anilibria-player-autoplay-toggle">
-          <span className="anilibria-player-autoplay-label">Автопропуск опенингов/эндингов</span>
-          <label className="anilibria-player-autoplay-switch">
+        <div className="enoughtv-player-autoplay-toggle">
+          <span className="enoughtv-player-autoplay-label">Автопропуск опенингов/эндингов</span>
+          <label className="enoughtv-player-autoplay-switch">
             <input
               type="checkbox"
               checked={autoSkipEnabled}
               onChange={() => setAutoSkipEnabled(!autoSkipEnabled)}
             />
-            <span className="anilibria-player-autoplay-slider"></span>
+            <span className="enoughtv-player-autoplay-slider"></span>
           </label>
         </div>
       </div>
@@ -1717,15 +1783,15 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
     if (!nextEpisode || !showNextEpisodeNotification) return null;
 
     return (
-      <div className="anilibria-player-next-episode visible">
-        <div className="anilibria-player-next-info">
-          <div className="anilibria-player-next-title">Следующий эпизод:</div>
-          <div className="anilibria-player-next-name">
+      <div className="enoughtv-player-next-episode visible">
+        <div className="enoughtv-player-next-info">
+          <div className="enoughtv-player-next-title">Следующий эпизод:</div>
+          <div className="enoughtv-player-next-name">
             {nextEpisode.name || `Эпизод ${nextEpisode.ordinal}`}
           </div>
         </div>
         <button
-          className="anilibria-player-next-button"
+          className="enoughtv-player-next-button"
           onClick={playNextEpisode}
         >
           Смотреть
@@ -1740,14 +1806,14 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
   const renderPlayerControls = () => {
     return (
       <motion.div
-        className={`anilibria-player-control-container ${showControls ? 'active' : ''}`}
+        className={`enoughtv-player-control-container ${showControls ? 'active' : ''}`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: showControls ? 1 : 0, y: showControls ? 0 : 20 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="anilibria-player-controls-wrapper">
+        <div className="enoughtv-player-controls-wrapper">
           <motion.button
-            className="anilibria-player-control-button"
+            className="enoughtv-player-control-button"
             onClick={togglePlay}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -1761,9 +1827,9 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
             </svg>
           </motion.button>
 
-          <div className="anilibria-player-volume-container">
+          <div className="enoughtv-player-volume-container">
             <motion.button
-              className="anilibria-player-control-button"
+              className="enoughtv-player-control-button"
               onClick={toggleMute}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -1779,22 +1845,22 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
               </svg>
             </motion.button>
 
-            <div className="anilibria-player-volume-slider-container">
+            <div className="enoughtv-player-volume-slider-container">
               <div
-                className="anilibria-player-volume-slider"
+                className="enoughtv-player-volume-slider"
                 ref={volumeSliderRef}
                 onClick={handleVolumeChange}
                 onMouseMove={(e) => e.buttons === 1 && handleVolumeChange(e)}
               >
                 <div
-                  className="anilibria-player-volume-level"
+                  className="enoughtv-player-volume-level"
                   style={{ height: `${volume * 100}%` }}
                 ></div>
               </div>
               <AnimatePresence>
                 {showVolumePopup && (
                   <motion.div
-                    className="anilibria-player-volume-popup active"
+                    className="enoughtv-player-volume-popup active"
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
@@ -1807,25 +1873,25 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
           </div>
 
           <div
-            className="anilibria-player-progress-container"
+            className="enoughtv-player-progress-container"
             onMouseMove={handleProgressHover}
             onMouseLeave={resetProgressHover}
           >
             <div
-              className={`anilibria-player-progress-bar ${isProgressActive ? 'active' : ''}`}
+              className={`enoughtv-player-progress-bar ${isProgressActive ? 'active' : ''}`}
               ref={progressBarRef}
               onClick={seekTo}
             >
               <div
-                className="anilibria-player-buffer-bar"
+                className="enoughtv-player-buffer-bar"
                 style={{ width: `${bufferedPercentage}%` }}
               ></div>
               <div
-                className="anilibria-player-progress-fill"
+                className="enoughtv-player-progress-fill"
                 style={{ width: `${progress}%` }}
               ></div>
               <div
-                className="anilibria-player-progress-thumb"
+                className="enoughtv-player-progress-thumb"
                 style={{
                   left: `${progress}%`,
                   transform: `translate(-50%, -50%) scale(${isProgressActive || showControls ? 1 : 0})`
@@ -1836,7 +1902,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
             <AnimatePresence>
               {hoverTime && (
                 <motion.div
-                  className="anilibria-player-progress-hover-time"
+                  className="enoughtv-player-progress-hover-time"
                   style={{ left: `${hoverPosition}px` }}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -1848,16 +1914,16 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
             </AnimatePresence>
           </div>
 
-          <div className="anilibria-player-time-display">
+          <div className="enoughtv-player-time-display">
             {formatTime(currentTime)} / {formatTime(duration)}
           </div>
 
-          <div className="anilibria-player-quality-wrapper">
+          <div className="enoughtv-player-quality-wrapper">
             {renderQualitySelector()}
           </div>
 
           <motion.button
-            className="anilibria-player-control-button"
+            className="enoughtv-player-control-button"
             onClick={togglePictureInPicture}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -1868,7 +1934,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
           </motion.button>
 
           <motion.button
-            className="anilibria-player-control-button"
+            className="enoughtv-player-control-button"
             onClick={toggleFullscreen}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -1883,7 +1949,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
           </motion.button>
 
           <motion.button
-            className="anilibria-player-control-button close-button"
+            className="enoughtv-player-control-button close-button"
             onClick={handleClose}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -1904,7 +1970,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
   return (
     <motion.div
-      className={`anilibria-player-container ${uiReady ? 'ui-ready' : ''}`}
+      className={`enoughtv-player-container ${uiReady ? 'ui-ready' : ''}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -1912,7 +1978,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
       onClick={(e) => e.stopPropagation()}
     >
       <div
-        className="anilibria-player"
+        className="enoughtv-player"
         ref={playerRef}
         onMouseMove={() => showControlsTemporarily()}
         onMouseLeave={() => isPlaying && setShowControls(false)}
@@ -1931,11 +1997,11 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
         <video
           ref={videoRef}
           playsInline
-          className={`anilibria-player-video ${isLoading ? 'loading' : ''}`}
+          className={`enoughtv-player-video ${isLoading ? 'loading' : ''}`}
         />
 
         {isLoading && (
-          <div className="anilibria-player-spinner">
+          <div className="enoughtv-player-spinner">
             <div className="spinner-inner">
               <div className="spinner-circle"></div>
             </div>
@@ -1943,7 +2009,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
         )}
 
         <motion.button
-          className={`anilibria-player-big-play-button ${!isPlaying && !isLoading ? 'visible' : ''}`}
+          className={`enoughtv-player-big-play-button ${!isPlaying && !isLoading ? 'visible' : ''}`}
           onClick={togglePlay}
         >
           <svg viewBox="0 0 24 24">
@@ -1957,7 +2023,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
         {renderSkipNotification()}
 
         <motion.div
-          className={`anilibria-player-top-gradient ${showControls ? 'visible' : ''}`}
+          className={`enoughtv-player-top-gradient ${showControls ? 'visible' : ''}`}
           animate={{
             opacity: showControls ? 1 : 0,
             y: showControls ? 0 : -10
@@ -1965,7 +2031,7 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
           transition={{ duration: 0.3 }}
         ></motion.div>
         <motion.div
-          className={`anilibria-player-video-title ${showControls ? 'visible' : ''}`}
+          className={`enoughtv-player-video-title ${showControls ? 'visible' : ''}`}
           animate={{
             opacity: showControls ? 1 : 0,
             y: showControls ? 0 : -10
@@ -1977,38 +2043,38 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
         {showKeyboardShortcuts && (
           <motion.div
-            className="anilibria-player-keyboard-shortcuts visible"
+            className="enoughtv-player-keyboard-shortcuts visible"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
           >
             <h3>Горячие клавиши</h3>
-            <div className="anilibria-player-shortcut-grid">
-              <div className="anilibria-player-key">Space</div>
+            <div className="enoughtv-player-shortcut-grid">
+              <div className="enoughtv-player-key">Space</div>
               <div>Воспроизведение / Пауза</div>
-              <div className="anilibria-player-key">K</div>
+              <div className="enoughtv-player-key">K</div>
               <div>Воспроизведение / Пауза</div>
-              <div className="anilibria-player-key">M</div>
+              <div className="enoughtv-player-key">M</div>
               <div>Выключить / Включить звук</div>
-              <div className="anilibria-player-key">F</div>
+              <div className="enoughtv-player-key">F</div>
               <div>Полноэкранный режим</div>
-              <div className="anilibria-player-key">E</div>
+              <div className="enoughtv-player-key">E</div>
               <div>Список эпизодов</div>
-              <div className="anilibria-player-key">N</div>
+              <div className="enoughtv-player-key">N</div>
               <div>Следующий эпизод</div>
-              <div className="anilibria-player-key">S</div>
+              <div className="enoughtv-player-key">S</div>
               <div>Пропустить опенинг/эндинг</div>
-              <div className="anilibria-player-key">←</div>
+              <div className="enoughtv-player-key">←</div>
               <div>Перемотка -10с</div>
-              <div className="anilibria-player-key">→</div>
+              <div className="enoughtv-player-key">→</div>
               <div>Перемотка +10с</div>
-              <div className="anilibria-player-key">↑</div>
+              <div className="enoughtv-player-key">↑</div>
               <div>Громкость +10%</div>
-              <div className="anilibria-player-key">↓</div>
+              <div className="enoughtv-player-key">↓</div>
               <div>Громкость -10%</div>
-              <div className="anilibria-player-key">?</div>
+              <div className="enoughtv-player-key">?</div>
               <div>Показать/Скрыть это меню</div>
-              <div className="anilibria-player-key">Esc</div>
+              <div className="enoughtv-player-key">Esc</div>
               <div>Закрыть плеер</div>
             </div>
           </motion.div>
@@ -2019,12 +2085,12 @@ const VideoPlayer = ({ episode, onClose, animeId, allEpisodes = [] }) => {
 
       {error && (
         <motion.div
-          className="anilibria-player-error"
+          className="enoughtv-player-error"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="anilibria-player-error-icon">
+          <div className="enoughtv-player-error-icon">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

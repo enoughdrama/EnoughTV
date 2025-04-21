@@ -16,7 +16,7 @@ const AnimeCard = ({ anime, onClick, index, extraClass = '' }) => {
     if (isAuthenticated && currentUser && anime?.id) {
       const fetchShikimoriData = async () => {
         try {
-          const settings = JSON.parse(localStorage.getItem('anilibria_shikimori_settings') || '{}');
+          const settings = JSON.parse(localStorage.getItem('enoughtv_shikimori_settings') || '{}');
           
           if (settings.showRatings) {
             const id = await getOrFindShikimoriId(anime);

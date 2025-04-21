@@ -42,6 +42,7 @@
 
 .shikimori-status-button:hover {
     background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
 }
 
 .shikimori-status-button.active {
@@ -141,157 +142,245 @@
     background-color: rgba(156, 39, 176, 0.8);
 }
 
-.shikimori-list-tabs {
+/* Rating styles */
+.shikimori-rating-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 25px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
-.shikimori-list-tab {
-    padding: 10px 16px;
+.shikimori-rating-container {
+    background-color: rgba(30, 30, 40, 0.95);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shikimori-rating-title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.shikimori-rating-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.shikimori-rating-star {
+    width: 40px;
+    height: 40px;
     border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.08);
     border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.shikimori-rating-star:hover {
+    transform: scale(1.1);
+}
+
+.shikimori-rating-star.active-1 {
+    background-color: #c13a3a;
+}
+
+.shikimori-rating-star.active-2 {
+    background-color: #d84939;
+}
+
+.shikimori-rating-star.active-3 {
+    background-color: #e35a37;
+}
+
+.shikimori-rating-star.active-4 {
+    background-color: #e97234;
+}
+
+.shikimori-rating-star.active-5 {
+    background-color: #ed8934;
+}
+
+.shikimori-rating-star.active-6 {
+    background-color: #e0a135;
+}
+
+.shikimori-rating-star.active-7 {
+    background-color: #c2b135;
+}
+
+.shikimori-rating-star.active-8 {
+    background-color: #98b344;
+}
+
+.shikimori-rating-star.active-9 {
+    background-color: #75b366;
+}
+
+.shikimori-rating-star.active-10 {
+    background-color: #4c8dc3;
+}
+
+.shikimori-rating-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.shikimori-rating-cancel {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
     color: rgba(255, 255, 255, 0.8);
-    font-size: 15px;
-    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.shikimori-list-tab:hover {
-    background-color: rgba(255, 255, 255, 0.12);
+.shikimori-rating-cancel:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
 }
 
-.shikimori-list-tab.active {
-    background-color: #4b6aa0;
+.shikimori-rating-remove {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(193, 58, 58, 0.8);
     color: white;
-}
-
-.shikimori-list-tab.active[data-status="watching"] {
-    background-color: #4CAF50;
-}
-
-.shikimori-list-tab.active[data-status="completed"] {
-    background-color: #2196F3;
-}
-
-.shikimori-list-tab.active[data-status="on_hold"] {
-    background-color: #FF9800;
-}
-
-.shikimori-list-tab.active[data-status="dropped"] {
-    background-color: #F44336;
-}
-
-.shikimori-list-tab.active[data-status="planned"] {
-    background-color: #9C27B0;
-}
-
-.shikimori-card-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 0 0 8px 8px;
-    margin-top: -8px;
-    position: relative;
-    z-index: 2;
-}
-
-.shikimori-anime-card {
-    margin-bottom: 0 !important;
-    border-radius: 8px 8px 0 0 !important;
-}
-
-.shikimori-card-progress {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    transition: all 0.2s ease;
 }
 
-.shikimori-episodes-watched {
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+.shikimori-rating-remove:hover {
+    background-color: rgba(193, 58, 58, 1);
+    transform: translateY(-2px);
 }
 
-.shikimori-card-score {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 600;
-    color: #FFD700;
-}
-
-.shikimori-card-score svg {
+.shikimori-rating-remove svg {
     width: 16px;
     height: 16px;
-    color: #FFD700;
 }
 
-.shikimori-sync-status {
+.shikimori-rating-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.shikimori-rating-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.shikimori-rating-badge svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Episode Shikimori badge */
+.episode-shikimori-badge {
+    background-color: rgba(75, 106, 160, 0.9);
+    color: white;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
     position: absolute;
-    bottom: 70px;
-    right: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    pointer-events: none;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
 }
 
-.shikimori-sync-status:hover {
-    opacity: 1;
+.episode-shikimori-badge img {
+    width: 12px;
+    height: 12px;
 }
 
-.shikimori-synced {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #4CAF50;
-}
-
-.shikimori-syncing {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.shikimori-synced img {
-    width: 14px;
-    height: 14px;
+.episode-item:hover .episode-shikimori-badge {
+    transform: translateY(-3px);
 }
 
 @media (max-width: 768px) {
-    .shikimori-list-tabs {
-        overflow-x: auto;
-        padding-bottom: 10px;
-        flex-wrap: nowrap;
-    }
-
-    .shikimori-list-tab {
-        white-space: nowrap;
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-
     .shikimori-status-buttons {
-        flex-direction: column;
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .shikimori-status-button {
         width: 100%;
+        text-align: center;
+    }
+
+    .shikimori-rating-stars {
+        gap: 6px;
+    }
+
+    .shikimori-rating-star {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .shikimori-status-container {
+        padding: 12px;
+    }
+
+    .shikimori-status-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .shikimori-rating-container {
+        padding: 16px;
+        width: 90%;
+    }
+
+    .shikimori-rating-stars {
+        gap: 4px;
+    }
+
+    .shikimori-rating-star {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
     }
 }

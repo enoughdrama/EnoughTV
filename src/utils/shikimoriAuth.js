@@ -4,8 +4,8 @@ const SHIKIMORI_CLIENT_ID = '';
 const SHIKIMORI_CLIENT_SECRET = '';
 const REDIRECT_URI = `${window.location.origin}/auth/callback`;
 
-const AUTH_STORAGE_KEY = 'anilibria_shikimori_auth';
-const USER_STORAGE_KEY = 'anilibria_shikimori_user';
+const AUTH_STORAGE_KEY = 'enoughtv_shikimori_auth';
+const USER_STORAGE_KEY = 'enoughtv_shikimori_user';
 
 export const getAuthUrl = () => {
   const params = new URLSearchParams({

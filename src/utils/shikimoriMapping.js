@@ -63,8 +63,8 @@ const findBestMatch = (results, anime) => {
       'special': 'special'
     };
     
-    const anilibriaType = anime.type.code.toLowerCase();
-    const shikimoriType = typeMap[anilibriaType] || null;
+    const enoughtvType = anime.type.code.toLowerCase();
+    const shikimoriType = typeMap[enoughtvType] || null;
     
     if (shikimoriType) {
       const typeMatch = results.find(result => result.kind === shikimoriType);
@@ -77,20 +77,20 @@ const findBestMatch = (results, anime) => {
   return results[0].id;
 };
 
-export const saveIdMapping = (anilibriaId, shikimoriId) => {
+export const saveIdMapping = (enoughtvId, shikimoriId) => {
   try {
-    const mappings = JSON.parse(localStorage.getItem('anilibria_shikimori_mappings') || '{}');
-    mappings[anilibriaId] = shikimoriId;
-    localStorage.setItem('anilibria_shikimori_mappings', JSON.stringify(mappings));
+    const mappings = JSON.parse(localStorage.getItem('enoughtv_shikimori_mappings') || '{}');
+    mappings[enoughtvId] = shikimoriId;
+    localStorage.setItem('enoughtv_shikimori_mappings', JSON.stringify(mappings));
   } catch (error) {
     console.error('Failed to save ID mapping:', error);
   }
 };
 
-export const getShikimoriId = (anilibriaId) => {
+export const getShikimoriId = (enoughtvId) => {
   try {
-    const mappings = JSON.parse(localStorage.getItem('anilibria_shikimori_mappings') || '{}');
-    return mappings[anilibriaId] || null;
+    const mappings = JSON.parse(localStorage.getItem('enoughtv_shikimori_mappings') || '{}');
+    return mappings[enoughtvId] || null;
   } catch (error) {
     console.error('Failed to get ID mapping:', error);
     return null;

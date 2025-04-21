@@ -1,4 +1,4 @@
-const FAVORITES_KEY = 'anilibria_favorites';
+const FAVORITES_KEY = 'enoughtv_favorites';
 
 export const getFavorites = () => {
   try {

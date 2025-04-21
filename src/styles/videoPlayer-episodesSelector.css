@@ -1,4 +1,4 @@
-.anilibria-player-episodes-panel {
+.enoughtv-player-episodes-panel {
     position: absolute;
     right: 20px;
     top: 20px;
@@ -18,11 +18,11 @@
     will-change: transform;
 }
 
-.anilibria-player-episodes-panel.visible {
+.enoughtv-player-episodes-panel.visible {
     transform: translateX(0);
 }
 
-.anilibria-player-episodes-header {
+.enoughtv-player-episodes-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,13 +30,13 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.anilibria-player-episodes-title {
+.enoughtv-player-episodes-title {
     font-size: 16px;
     font-weight: 600;
     color: white;
 }
 
-.anilibria-player-episodes-close {
+.enoughtv-player-episodes-close {
     width: 28px;
     height: 28px;
     background: none;
@@ -50,16 +50,16 @@
     transition: background-color 0.2s ease;
 }
 
-.anilibria-player-episodes-close:hover {
+.enoughtv-player-episodes-close:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.anilibria-player-episodes-close svg {
+.enoughtv-player-episodes-close svg {
     width: 20px;
     height: 20px;
 }
 
-.anilibria-player-episodes-list {
+.enoughtv-player-episodes-list {
     max-height: calc(80vh - 60px);
     overflow-y: auto;
     padding: 15px;
@@ -67,20 +67,20 @@
     scrollbar-color: var(--player-primary-color) transparent;
 }
 
-.anilibria-player-episodes-list::-webkit-scrollbar {
+.enoughtv-player-episodes-list::-webkit-scrollbar {
     width: 5px;
 }
 
-.anilibria-player-episodes-list::-webkit-scrollbar-track {
+.enoughtv-player-episodes-list::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.anilibria-player-episodes-list::-webkit-scrollbar-thumb {
+.enoughtv-player-episodes-list::-webkit-scrollbar-thumb {
     background-color: var(--player-primary-color);
     border-radius: 10px;
 }
 
-.anilibria-player-episode-item {
+.enoughtv-player-episode-item {
     display: flex;
     align-items: center;
     padding: 10px;
@@ -90,16 +90,16 @@
     margin-bottom: 8px;
 }
 
-.anilibria-player-episode-item:hover {
+.enoughtv-player-episode-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.anilibria-player-episode-item.active {
+.enoughtv-player-episode-item.active {
     background-color: rgba(203, 98, 149, 0.2);
     border-left: 3px solid var(--player-primary-color);
 }
 
-.anilibria-player-episode-number {
+.enoughtv-player-episode-number {
     width: 28px;
     height: 28px;
     display: flex;
@@ -112,15 +112,15 @@
     font-size: 14px;
 }
 
-.anilibria-player-episode-item.active .anilibria-player-episode-number {
+.enoughtv-player-episode-item.active .enoughtv-player-episode-number {
     background-color: var(--player-primary-color);
 }
 
-.anilibria-player-episode-info {
+.enoughtv-player-episode-info {
     flex: 1;
 }
 
-.anilibria-player-episode-name {
+.enoughtv-player-episode-name {
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 4px;
@@ -131,45 +131,45 @@
     max-width: 280px;
 }
 
-.anilibria-player-episode-meta {
+.enoughtv-player-episode-meta {
     display: flex;
     align-items: center;
     font-size: 12px;
     color: rgba(255, 255, 255, 0.6);
 }
 
-.anilibria-player-episode-duration {
+.enoughtv-player-episode-duration {
     display: flex;
     align-items: center;
     margin-right: 12px;
 }
 
-.anilibria-player-episode-duration svg {
+.enoughtv-player-episode-duration svg {
     width: 12px;
     height: 12px;
     margin-right: 4px;
 }
 
-.anilibria-player-episode-status {
+.enoughtv-player-episode-status {
     display: flex;
     align-items: center;
 }
 
-.anilibria-player-episode-status svg {
+.enoughtv-player-episode-status svg {
     width: 12px;
     height: 12px;
     margin-right: 4px;
 }
 
-.anilibria-player-episode-status.watched {
+.enoughtv-player-episode-status.watched {
     color: #10b981;
 }
 
-.anilibria-player-episode-status.in-progress {
+.enoughtv-player-episode-status.in-progress {
     color: #f59e0b;
 }
 
-.anilibria-player-next-episode {
+.enoughtv-player-next-episode {
     position: absolute;
     bottom: 90px;
     right: 20px;
@@ -190,23 +190,23 @@
     will-change: transform;
 }
 
-.anilibria-player-next-episode.visible {
+.enoughtv-player-next-episode.visible {
     transform: translateX(0);
 }
 
-.anilibria-player-next-info {
+.enoughtv-player-next-info {
     flex: 1;
     margin-right: 15px;
 }
 
-.anilibria-player-next-title {
+.enoughtv-player-next-title {
     font-size: 14px;
     font-weight: 600;
     color: white;
     margin-bottom: 4px;
 }
 
-.anilibria-player-next-name {
+.enoughtv-player-next-name {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.7);
     white-space: nowrap;
@@ -215,7 +215,7 @@
     max-width: 280px;
 }
 
-.anilibria-player-next-button {
+.enoughtv-player-next-button {
     padding: 8px 12px;
     background-color: var(--player-primary-color);
     color: white;
@@ -229,17 +229,17 @@
     align-items: center;
 }
 
-.anilibria-player-next-button:hover {
+.enoughtv-player-next-button:hover {
     background-color: var(--player-primary-hover);
 }
 
-.anilibria-player-next-button svg {
+.enoughtv-player-next-button svg {
     width: 14px;
     height: 14px;
     margin-left: 6px;
 }
 
-.anilibria-player-episodes-button {
+.enoughtv-player-episodes-button {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -261,24 +261,24 @@
     will-change: transform, opacity;
 }
 
-.anilibria-player-episodes-button.visible,
-.anilibria-player:hover .anilibria-player-episodes-button {
+.enoughtv-player-episodes-button.visible,
+.enoughtv-player:hover .enoughtv-player-episodes-button {
     opacity: 1;
     transform: scale(1);
 }
 
-.anilibria-player-episodes-button:hover {
+.enoughtv-player-episodes-button:hover {
     background-color: rgba(255, 255, 255, 0.2);
     transform: scale(1.05);
 }
 
-.anilibria-player-episodes-button svg {
+.enoughtv-player-episodes-button svg {
     width: 24px;
     height: 24px;
     color: white;
 }
 
-.anilibria-player-autoplay-toggle {
+.enoughtv-player-autoplay-toggle {
     display: flex;
     align-items: center;
     margin-top: 15px;
@@ -287,26 +287,26 @@
     padding-top: 15px;
 }
 
-.anilibria-player-autoplay-label {
+.enoughtv-player-autoplay-label {
     font-size: 14px;
     color: white;
     margin-right: auto;
 }
 
-.anilibria-player-autoplay-switch {
+.enoughtv-player-autoplay-switch {
     position: relative;
     display: inline-block;
     width: 40px;
     height: 20px;
 }
 
-.anilibria-player-autoplay-switch input {
+.enoughtv-player-autoplay-switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.anilibria-player-autoplay-slider {
+.enoughtv-player-autoplay-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -318,7 +318,7 @@
     border-radius: 20px;
 }
 
-.anilibria-player-autoplay-slider:before {
+.enoughtv-player-autoplay-slider:before {
     position: absolute;
     content: "";
     height: 16px;
@@ -331,53 +331,53 @@
     will-change: transform;
 }
 
-.anilibria-player-autoplay-switch input:checked+.anilibria-player-autoplay-slider {
+.enoughtv-player-autoplay-switch input:checked+.enoughtv-player-autoplay-slider {
     background-color: var(--player-primary-color);
 }
 
-.anilibria-player-autoplay-switch input:checked+.anilibria-player-autoplay-slider:before {
+.enoughtv-player-autoplay-switch input:checked+.enoughtv-player-autoplay-slider:before {
     transform: translateX(20px);
 }
 
 @media (max-width: 768px) {
-    .anilibria-player-episodes-panel {
+    .enoughtv-player-episodes-panel {
         max-width: 320px;
         right: 10px;
         top: 10px;
     }
 
-    .anilibria-player-episode-name {
+    .enoughtv-player-episode-name {
         max-width: 220px;
     }
 
-    .anilibria-player-next-episode {
+    .enoughtv-player-next-episode {
         bottom: 80px;
         right: 10px;
         max-width: 320px;
     }
 
-    .anilibria-player-next-name {
+    .enoughtv-player-next-name {
         max-width: 200px;
     }
 
-    .anilibria-player-episodes-button {
+    .enoughtv-player-episodes-button {
         top: 10px;
         right: 10px;
     }
 }
 
 @media (max-width: 480px) {
-    .anilibria-player-episodes-panel {
+    .enoughtv-player-episodes-panel {
         max-width: calc(100% - 20px);
         width: calc(100% - 20px);
         right: 10px;
     }
 
-    .anilibria-player-episode-name {
+    .enoughtv-player-episode-name {
         max-width: 180px;
     }
 
-    .anilibria-player-next-episode {
+    .enoughtv-player-next-episode {
         max-width: calc(100% - 20px);
         width: calc(100% - 20px);
         right: 10px;

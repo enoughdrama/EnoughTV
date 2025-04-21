@@ -5,7 +5,7 @@
  */
 import { fetchAPI } from './api';
 
-const WATCH_HISTORY_KEY = 'anilibria_watch_history';
+const WATCH_HISTORY_KEY = 'enoughtv_watch_history';
 
 /**
  * Initialize watch history from localStorage or create if not exists
