@@ -1,0 +1,925 @@
+.enoughtv-player-container {
+  --player-primary-color: #6366f1;
+  --player-primary-hover: #4f46e5;
+  --player-primary-glow: rgba(99, 102, 241, 0.5);
+  --player-secondary-color: #ec4899;
+  --player-light-bg: rgba(255, 255, 255, 0.1);
+  --player-dark-bg: rgba(0, 0, 0, 0.5);
+  --player-control-size: 48px;
+  --player-slider-height: 5px;
+  --player-slider-height-hover: 10px;
+  --player-anim-duration: 0.3s;
+  --player-glass-bg: rgba(28, 28, 30, 0.6);
+  --player-error-color: #ef4444;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.97);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.enoughtv-player-container.ui-ready {
+  opacity: 1;
+}
+
+.enoughtv-player {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  max-height: 90vh;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 102, 241, 0.15);
+  background: #000;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.enoughtv-player video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.enoughtv-player video.loading {
+  opacity: 0.5;
+}
+
+.enoughtv-player-quality-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  min-width: 80px;
+}
+
+.enoughtv-player-quality-menu {
+  position: relative;
+  margin-right: 8px;
+}
+
+.enoughtv-player-quality-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--player-glass-bg);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  font-weight: 500;
+  min-width: 80px;
+  transition: background-color var(--player-anim-duration) ease, border-color var(--player-anim-duration) ease, transform var(--player-anim-duration) ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.enoughtv-player-quality-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.enoughtv-player-quality-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.enoughtv-player-quality-button.loading {
+  min-width: 80px;
+}
+
+.quality-loading-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  animation: quality-spinner 1.2s linear infinite;
+}
+
+.quality-loading-indicator svg {
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes quality-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.enoughtv-player-quality-icon {
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.enoughtv-player-quality-icon.active {
+  transform: rotate(180deg);
+}
+
+.enoughtv-player-quality-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.enoughtv-player-quality-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background-color: rgba(28, 28, 30, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  min-width: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 30;
+  transform-origin: bottom right;
+}
+
+.enoughtv-player-quality-option {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.enoughtv-player-quality-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.enoughtv-player-quality-option:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 300%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: quality-option-shine 1.5s ease-in-out;
+}
+
+@keyframes quality-option-shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.enoughtv-player-quality-option.active {
+  color: var(--player-primary-color);
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.enoughtv-player-quality-option .quality-check {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.enoughtv-player-quality-option .quality-check svg {
+  width: 14px;
+  height: 14px;
+}
+
+.enoughtv-player-control-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  opacity: 0;
+  transition: opacity var(--player-anim-duration) ease, transform var(--player-anim-duration) ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transform: translateY(10px);
+  will-change: opacity, transform;
+}
+
+.enoughtv-player-controls-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  gap: 15px;
+}
+
+.enoughtv-player:hover .enoughtv-player-control-container,
+.enoughtv-player-control-container.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.enoughtv-player-progress-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 36px;
+  position: relative;
+}
+
+.enoughtv-player-control-button.close-button {
+  background-color: rgba(239, 68, 68, 0.2);
+}
+
+.enoughtv-player-control-button.close-button:hover {
+  background-color: rgba(239, 68, 68, 0.4);
+}
+
+.enoughtv-player-progress-bar {
+  flex: 1;
+  height: var(--player-slider-height);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: var(--player-slider-height);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset;
+  transition: height 0.2s ease;
+}
+
+.enoughtv-player-progress-bar.active {
+  height: var(--player-slider-height);
+}
+
+.enoughtv-player-progress-fill {
+  height: 100%;
+  width: 0%;
+  background-color: var(--player-primary-color);
+  border-radius: var(--player-slider-height);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px var(--player-primary-glow);
+  z-index: 2;
+  will-change: width;
+}
+
+.enoughtv-player-buffer-bar {
+  height: 100%;
+  width: 0%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: var(--player-slider-height);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  will-change: width;
+}
+
+.enoughtv-player-progress-thumb {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: 3;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.enoughtv-player-progress-container:hover .enoughtv-player-progress-thumb,
+.enoughtv-player-progress-bar.active .enoughtv-player-progress-thumb {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.enoughtv-player-progress-hover-time {
+  position: absolute;
+  top: -30px;
+  transform: translateX(-50%);
+  background-color: var(--player-primary-color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: -20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 20;
+  white-space: nowrap;
+}
+
+.enoughtv-player-progress-hover-time::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--player-primary-color) transparent transparent transparent;
+}
+
+.enoughtv-player-control-button {
+  width: var(--player-control-size);
+  height: var(--player-control-size);
+  border-radius: 50%;
+  background-color: var(--player-glass-bg);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: background-color var(--player-anim-duration) ease, transform var(--player-anim-duration) ease, box-shadow var(--player-anim-duration) ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  will-change: background-color, transform;
+  transform: scale(1);
+}
+
+.enoughtv-player-control-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.enoughtv-player-control-button:active {
+  transform: scale(0.95);
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+.enoughtv-player-control-button svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.enoughtv-player-time-display {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 110px;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.enoughtv-player-volume-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-right: 5px;
+}
+
+.enoughtv-player-volume-container::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: -10px;
+  right: -10px;
+  height: 130px;
+  background-color: transparent;
+  z-index: 15;
+}
+
+.enoughtv-player-volume-slider-container {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) scaleY(0);
+  height: 0;
+  background: var(--player-glass-bg);
+  border-radius: 12px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  transform-origin: bottom;
+  opacity: 0;
+  overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  will-change: transform, height, opacity;
+}
+
+.enoughtv-player-volume-container:hover .enoughtv-player-volume-slider-container {
+  transform: translateX(-50%) scaleY(1);
+  height: 120px;
+  opacity: 1;
+}
+
+.enoughtv-player-volume-slider {
+  width: var(--player-slider-height-hover);
+  height: 100px;
+  background-color: transparent;
+  border-radius: var(--player-slider-height-hover);
+  position: relative;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.enoughtv-player-volume-level {
+  width: 100%;
+  background-color: var(--player-primary-color);
+  border-radius: var(--player-slider-height-hover);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: height 0.1s linear;
+  box-shadow: 0 0 10px var(--player-primary-glow);
+  will-change: height;
+}
+
+.enoughtv-player-thumbnail-preview {
+  display: none;
+}
+
+.enoughtv-player-thumbnail-preview::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid var(--player-primary-color);
+}
+
+.enoughtv-player-thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.enoughtv-player-video-title {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity var(--player-anim-duration) ease, transform var(--player-anim-duration) ease;
+  z-index: 4;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  max-width: 80%;
+  will-change: opacity, transform;
+}
+
+.enoughtv-player:hover .enoughtv-player-video-title,
+.enoughtv-player-video-title.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.enoughtv-player-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  opacity: 1;
+  transition: opacity var(--player-anim-duration) ease;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.spinner-inner::before,
+.spinner-inner::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spinner-inner::before {
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(99, 102, 241, 0.1);
+  border-top: 4px solid rgba(99, 102, 241, 0);
+  border-right: 4px solid rgba(99, 102, 241, 0);
+  animation: enoughtv-player-spin 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.spinner-inner::after {
+  width: 70%;
+  height: 70%;
+  border: 4px solid rgba(99, 102, 241, 0);
+  border-bottom: 4px solid rgba(64, 67, 221, 0.8);
+  border-left: 4px solid rgba(64, 67, 221, 0.8);
+  animation: enoughtv-player-spin-reverse 1s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  box-shadow: 0 0 10px rgba(64, 67, 221, 0.5);
+}
+
+.spinner-circle {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  background-color: var(--player-primary-color);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px var(--player-primary-glow);
+  animation: enoughtv-player-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes enoughtv-player-spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes enoughtv-player-spin-reverse {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes enoughtv-player-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.enoughtv-player-big-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: var(--player-primary-color);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: transform var(--player-anim-duration) ease, background-color var(--player-anim-duration) ease, box-shadow var(--player-anim-duration) ease, opacity var(--player-anim-duration) ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 30px var(--player-primary-glow);
+  z-index: 6;
+  will-change: transform, opacity;
+}
+
+.enoughtv-player-big-play-button.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.enoughtv-player-big-play-button:hover {
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.7), 0 0 40px var(--player-primary-glow);
+}
+
+.enoughtv-player-big-play-button svg {
+  width: 40px;
+  height: 40px;
+  fill: white;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.enoughtv-player-top-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), transparent);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity var(--player-anim-duration) ease, transform var(--player-anim-duration) ease;
+  z-index: 3;
+  will-change: opacity, transform;
+}
+
+.enoughtv-player:hover .enoughtv-player-top-gradient,
+.enoughtv-player-top-gradient.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.enoughtv-player-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 0 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+.enoughtv-player-error-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--player-error-color);
+}
+
+.enoughtv-player-error-icon svg {
+  width: 64px;
+  height: 64px;
+}
+
+.enoughtv-player-error p {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.enoughtv-player-error .button {
+  margin-top: 24px;
+}
+
+.enoughtv-player-error .primary-button {
+  background-color: var(--player-primary-color);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.enoughtv-player-error .primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.enoughtv-player-keyboard-shortcuts {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background-color: rgba(20, 20, 20, 0.95);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  width: 400px;
+  max-width: 90%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 30;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  will-change: transform, opacity;
+}
+
+.enoughtv-player-keyboard-shortcuts.visible {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.enoughtv-player-keyboard-shortcuts h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--player-primary-color);
+}
+
+.enoughtv-player-shortcut-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 10px 16px;
+  font-size: 14px;
+}
+
+.enoughtv-player-key {
+  font-family: -apple-system, monospace;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: center;
+  min-width: 36px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.enoughtv-player-volume-popup {
+  position: absolute;
+  right: -70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--player-primary-color);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  z-index: 25;
+  will-change: transform, opacity;
+}
+
+.enoughtv-player-volume-popup.active {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+@media (max-width: 768px) {
+  .enoughtv-player {
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .enoughtv-player-control-container {
+    padding: 15px 10px;
+  }
+
+  .enoughtv-player-time-display {
+    min-width: auto;
+    font-size: 12px;
+  }
+
+  .enoughtv-player-volume-slider-container {
+    left: 0;
+    transform: translateX(0) scaleY(0);
+  }
+
+  .enoughtv-player-volume-container:hover .enoughtv-player-volume-slider-container {
+    transform: translateX(0) scaleY(1);
+  }
+
+  .enoughtv-player-controls-wrapper {
+    gap: 10px;
+  }
+
+  .enoughtv-player-control-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .enoughtv-player-control-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .enoughtv-player-keyboard-shortcuts {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .enoughtv-player-shortcut-grid {
+    grid-gap: 8px 12px;
+    font-size: 12px;
+  }
+
+  .enoughtv-player-quality-button {
+    padding: 4px 12px;
+    font-size: 12px;
+    min-width: 70px;
+  }
+
+  .enoughtv-player-thumbnail-preview {
+    width: 160px;
+    height: 90px;
+  }
+
+  .enoughtv-player-video-title {
+    font-size: 16px;
+    max-width: 70%;
+  }
+
+  .enoughtv-player-spinner {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .enoughtv-player-controls-wrapper {
+    gap: 6px;
+  }
+
+  .enoughtv-player-control-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .enoughtv-player-control-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .enoughtv-player-time-display {
+    font-size: 11px;
+  }
+
+  .enoughtv-player-quality-button {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 60px;
+  }
+
+  .enoughtv-player-thumbnail-preview {
+    width: 120px;
+    height: 68px;
+    top: -90px;
+  }
+
+  .enoughtv-player-video-title {
+    font-size: 14px;
+    max-width: 60%;
+  }
+
+  .enoughtv-player-spinner {
+    width: 50px;
+    height: 50px;
+  }
+}

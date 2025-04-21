@@ -1,0 +1,221 @@
+.enoughtv-player-skip-notification {
+    position: absolute;
+    bottom: 120px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(30, 30, 35, 0.85) 0%, rgba(20, 20, 25, 0.95) 100%);
+    border-radius: 16px;
+    padding: 18px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(99, 102, 241, 0.15);
+    max-width: 420px;
+    z-index: 40;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(110%);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    will-change: transform, opacity;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.enoughtv-player-skip-notification.visible {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.enoughtv-player-skip-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.enoughtv-player-skip-icon {
+    width: 36px;
+    height: 36px;
+    margin-right: 12px;
+    background-color: rgba(99, 102, 241, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--player-primary-color);
+    flex-shrink: 0;
+}
+
+.enoughtv-player-skip-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.enoughtv-player-skip-text {
+    flex: 1;
+}
+
+.enoughtv-player-skip-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.enoughtv-player-skip-subtitle {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.enoughtv-player-skip-progress {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    position: relative;
+}
+
+.enoughtv-player-skip-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #4f46e5, #6366f1);
+    border-radius: 2px;
+    width: 0%;
+    transition: none;
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+}
+
+.enoughtv-player-skip-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.enoughtv-player-skip-button {
+    flex: 1;
+    padding: 10px 16px;
+    background: linear-gradient(to bottom, var(--player-primary-color), var(--player-primary-hover));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.enoughtv-player-skip-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.enoughtv-player-skip-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+.enoughtv-player-skip-button svg {
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.enoughtv-player-watch-button {
+    flex: 1;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.enoughtv-player-watch-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.enoughtv-player-watch-button:active {
+    transform: translateY(0);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .enoughtv-player-skip-notification {
+        bottom: 100px;
+        right: 10px;
+        max-width: 360px;
+        padding: 16px;
+    }
+
+    .enoughtv-player-skip-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .enoughtv-player-skip-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .enoughtv-player-skip-notification {
+        max-width: calc(100% - 20px);
+        width: calc(100% - 20px);
+        right: 10px;
+        padding: 14px;
+        bottom: 90px;
+    }
+
+    .enoughtv-player-skip-title {
+        font-size: 15px;
+    }
+
+    .enoughtv-player-skip-subtitle {
+        font-size: 12px;
+    }
+
+    .enoughtv-player-skip-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .enoughtv-player-skip-button,
+    .enoughtv-player-watch-button {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+}

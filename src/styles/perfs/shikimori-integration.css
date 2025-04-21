@@ -1,0 +1,385 @@
+.shikimori-status-container {
+    margin-top: 20px;
+    background-color: rgba(75, 106, 160, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shikimori-status-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.shikimori-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.shikimori-status-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.shikimori-status-button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.shikimori-status-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.shikimori-status-button.active {
+    background-color: #4b6aa0;
+    color: white;
+}
+
+.shikimori-status-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.shikimori-status-button.active[data-status="watching"],
+.shikimori-status-button.active[data-status="rewatching"] {
+    background-color: #4CAF50;
+}
+
+.shikimori-status-button.active[data-status="completed"] {
+    background-color: #2196F3;
+}
+
+.shikimori-status-button.active[data-status="on_hold"] {
+    background-color: #FF9800;
+}
+
+.shikimori-status-button.active[data-status="dropped"] {
+    background-color: #F44336;
+}
+
+.shikimori-status-button.active[data-status="planned"] {
+    background-color: #9C27B0;
+}
+
+.shikimori-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 4px;
+    background-color: rgba(75, 106, 160, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.shikimori-badge img {
+    width: 12px;
+    height: 12px;
+}
+
+.sync-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-top-color: #4b6aa0;
+    border-radius: 50%;
+    animation: sync-spin 1s linear infinite;
+}
+
+@keyframes sync-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.anime-card .shikimori-status-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: rgba(75, 106, 160, 0.8);
+    color: white;
+    z-index: 2;
+}
+
+.anime-card .shikimori-status-tag.watching {
+    background-color: rgba(76, 175, 80, 0.8);
+}
+
+.anime-card .shikimori-status-tag.completed {
+    background-color: rgba(33, 150, 243, 0.8);
+}
+
+.anime-card .shikimori-status-tag.on_hold {
+    background-color: rgba(255, 152, 0, 0.8);
+}
+
+.anime-card .shikimori-status-tag.dropped {
+    background-color: rgba(244, 67, 54, 0.8);
+}
+
+.anime-card .shikimori-status-tag.planned {
+    background-color: rgba(156, 39, 176, 0.8);
+}
+
+/* Rating styles */
+.shikimori-rating-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.shikimori-rating-container {
+    background-color: rgba(30, 30, 40, 0.95);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shikimori-rating-title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.shikimori-rating-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.shikimori-rating-star {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.shikimori-rating-star:hover {
+    transform: scale(1.1);
+}
+
+.shikimori-rating-star.active-1 {
+    background-color: #c13a3a;
+}
+
+.shikimori-rating-star.active-2 {
+    background-color: #d84939;
+}
+
+.shikimori-rating-star.active-3 {
+    background-color: #e35a37;
+}
+
+.shikimori-rating-star.active-4 {
+    background-color: #e97234;
+}
+
+.shikimori-rating-star.active-5 {
+    background-color: #ed8934;
+}
+
+.shikimori-rating-star.active-6 {
+    background-color: #e0a135;
+}
+
+.shikimori-rating-star.active-7 {
+    background-color: #c2b135;
+}
+
+.shikimori-rating-star.active-8 {
+    background-color: #98b344;
+}
+
+.shikimori-rating-star.active-9 {
+    background-color: #75b366;
+}
+
+.shikimori-rating-star.active-10 {
+    background-color: #4c8dc3;
+}
+
+.shikimori-rating-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.shikimori-rating-cancel {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.shikimori-rating-cancel:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.shikimori-rating-remove {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(193, 58, 58, 0.8);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.shikimori-rating-remove:hover {
+    background-color: rgba(193, 58, 58, 1);
+    transform: translateY(-2px);
+}
+
+.shikimori-rating-remove svg {
+    width: 16px;
+    height: 16px;
+}
+
+.shikimori-rating-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.shikimori-rating-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.shikimori-rating-badge svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Episode Shikimori badge */
+.episode-shikimori-badge {
+    background-color: rgba(75, 106, 160, 0.9);
+    color: white;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.episode-shikimori-badge img {
+    width: 12px;
+    height: 12px;
+}
+
+.episode-item:hover .episode-shikimori-badge {
+    transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+    .shikimori-status-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .shikimori-status-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .shikimori-rating-stars {
+        gap: 6px;
+    }
+
+    .shikimori-rating-star {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .shikimori-status-container {
+        padding: 12px;
+    }
+
+    .shikimori-status-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .shikimori-rating-container {
+        padding: 16px;
+        width: 90%;
+    }
+
+    .shikimori-rating-stars {
+        gap: 4px;
+    }
+
+    .shikimori-rating-star {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+}
