@@ -8,9 +8,17 @@ import {
   findLastWatchedEpisode,
   formatTimeMMSS
 } from '../../utils/watchHistory';
-import { isInFavorites, toggleFavorite } from '../../utils/favorites';
+import { useAuth } from '../../context/AuthContext';
+import { 
+  findUserRate, 
+  addAnimeToList, 
+  updateUserRate, 
+  getStatusDisplayName,
+  syncEpisodeProgress 
+} from '../../utils/shikimoriRates';
+import { getOrFindShikimoriId } from '../../utils/shikimoriMapping';
 import '../../styles/animeDetails.css';
-import '../../styles/favorites.css';
+import '../../styles/shikimori-integration.css';
 
 const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
   const [anime, setAnime] = useState(null);
@@ -21,7 +29,30 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
   const [selectedEpisode, setSelectedEpisode] = useState(null);
   const [activeTab, setActiveTab] = useState('info');
   const [lastWatchedInfo, setLastWatchedInfo] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false);
+  
+  // Shikimori integration
+  const { isAuthenticated, currentUser } = useAuth();
+  const [shikimoriStatus, setShikimoriStatus] = useState(null);
+  const [shikimoriStatusId, setShikimoriStatusId] = useState(null);
+  const [syncingShikimori, setSyncingShikimori] = useState(false);
+  const [shikimoriId, setShikimoriId] = useState(null);
+  const [settings, setSettings] = useState({
+    syncHistory: false,
+    publishActivity: false,
+    showRatings: true,
+    notifications: false
+  });
+
+  useEffect(() => {
+    try {
+      const savedSettings = localStorage.getItem('anilibria_shikimori_settings');
+      if (savedSettings) {
+        setSettings(JSON.parse(savedSettings));
+      }
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchAnimeDetails = async () => {
@@ -31,13 +62,9 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
         if (data) {
           setAnime(data);
           
-          // Check if anime is in favorites
-          setIsFavorite(isInFavorites(data.id));
-          
           if (data.episodes && data.episodes.length > 0) {
             setSelectedEpisode(data.episodes[0]);
 
-            // Find last watched episode info or the next to watch
             const watchInfo = findLastWatchedEpisode(animeId, data.episodes);
             console.log('Last watched info:', watchInfo);
             setLastWatchedInfo(watchInfo);
@@ -60,6 +87,42 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
     }
   }, [animeId]);
 
+  useEffect(() => {
+    const fetchShikimoriId = async () => {
+      if (anime) {
+        try {
+          const id = await getOrFindShikimoriId(anime);
+          setShikimoriId(id);
+        } catch (error) {
+          console.error('Failed to get Shikimori ID:', error);
+        }
+      }
+    };
+    
+    fetchShikimoriId();
+  }, [anime]);
+
+  useEffect(() => {
+    const checkShikimoriStatus = async () => {
+      if (isAuthenticated && currentUser && anime && shikimoriId) {
+        try {
+          const userRate = await findUserRate(currentUser.id, shikimoriId);
+          if (userRate) {
+            setShikimoriStatus(userRate.status);
+            setShikimoriStatusId(userRate.id);
+          } else {
+            setShikimoriStatus(null);
+            setShikimoriStatusId(null);
+          }
+        } catch (error) {
+          console.error('Failed to check Shikimori status:', error);
+        }
+      }
+    };
+
+    checkShikimoriStatus();
+  }, [isAuthenticated, currentUser, anime, shikimoriId]);
+
   const fetchFranchiseData = async (releaseId) => {
     setFranchiseLoading(true);
     try {
@@ -74,49 +137,63 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
     }
   };
 
+  const handleShikimoriStatusChange = async (newStatus) => {
+    if (!isAuthenticated || !currentUser || !anime || !shikimoriId) return;
+    
+    setSyncingShikimori(true);
+    try {
+      if (shikimoriStatusId) {
+        await updateUserRate(shikimoriStatusId, { status: newStatus });
+      } else {
+        const result = await addAnimeToList(currentUser.id, shikimoriId, newStatus);
+        setShikimoriStatusId(result.id);
+      }
+      setShikimoriStatus(newStatus);
+    } catch (error) {
+      console.error('Failed to update Shikimori status:', error);
+    } finally {
+      setSyncingShikimori(false);
+    }
+  };
+
   const handleWatchEpisode = (episode) => {
-    // Если это продолжение из lastWatchedInfo, используем сохраненное время
     let startTime = 0;
 
-    // Проверяем, есть ли у нас сохраненная информация по этому эпизоду
     if (lastWatchedInfo && lastWatchedInfo.episode.id === episode.id && !lastWatchedInfo.isNext) {
       startTime = lastWatchedInfo.time;
       console.log(`Resuming episode ${episode.ordinal} from saved time:`, startTime);
-    }
-    // Иначе проверяем историю просмотров
-    else {
+    } else {
       const progress = getEpisodeProgressPercentage(animeId, episode.id);
-      // Только если прогресс уже есть и он между 1% и 90%, рассчитываем время
       if (progress > 1 && progress < 90 && episode.duration) {
         startTime = Math.floor((progress / 100) * episode.duration);
         console.log(`Calculated start time for episode ${episode.ordinal}:`, startTime);
       } else {
-        // Иначе начинаем с начала (0)
         console.log(`Starting episode ${episode.ordinal} from beginning`);
         startTime = 0;
       }
     }
 
-    // Создаем копию эпизода с установленным временем старта
     const episodeWithStartTime = {
       ...episode,
       startTime: startTime
     };
 
-    // Обновляем выбранный эпизод в UI
     setSelectedEpisode(episode);
 
-    // НЕ устанавливаем начальный прогресс для новых эпизодов
-    // Удалено: updateEpisodeProgress(animeId, episode.id, 1, false);
-
-    // Передаем эпизод с временем старта в плеер
     onWatchEpisode(episodeWithStartTime, anime.episodes);
-  };
 
-  const handleToggleFavorite = () => {
-    if (anime) {
-      const newFavoriteStatus = toggleFavorite(anime);
-      setIsFavorite(newFavoriteStatus);
+    const syncWithShikimori = settings?.syncHistory;
+    if (syncWithShikimori && isAuthenticated && currentUser && anime && shikimoriId) {
+      try {
+        syncEpisodeProgress(
+          currentUser.id, 
+          shikimoriId, 
+          episode.ordinal, 
+          anime.episodes_total
+        );
+      } catch (error) {
+        console.error('Failed to sync with Shikimori:', error);
+      }
     }
   };
 
@@ -169,7 +246,6 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
     );
   }
 
-  // Safely process description - handle null/undefined case
   const renderDescription = () => {
     if (!anime.description) {
       return <p>Описание отсутствует</p>;
@@ -257,7 +333,6 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
                 {lastWatchedInfo ? (
-                  // Shows resume button with episode info and progress
                   <motion.button
                     className="button primary-button watch-button resume-button"
                     onClick={() => handleWatchEpisode(lastWatchedInfo.episode)}
@@ -284,7 +359,6 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                     )}
                   </motion.button>
                 ) : (
-                  // Regular watch button when no watch history exists
                   <motion.button
                     className="button primary-button watch-button"
                     onClick={() => handleWatchEpisode(anime.episodes[0])}
@@ -298,7 +372,6 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                   </motion.button>
                 )}
 
-                {/* Start from beginning button shows when resume is available */}
                 {lastWatchedInfo && !lastWatchedInfo.isNext && (
                   <motion.button
                     className="button secondary-button restart-button"
@@ -316,22 +389,39 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                     С начала
                   </motion.button>
                 )}
-
-                {/* Favorite button */}
-                <motion.button
-                  className={`favorite-button ${isFavorite ? 'active' : ''}`}
-                  onClick={handleToggleFavorite}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 21l-7-4-7 4V5a2 2 0 012-2h10a2 2 0 012 2v16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  {isFavorite ? 'В избранном' : 'Добавить в избранное'}
-                </motion.button>
+              </motion.div>
+            )}
+            
+            {isAuthenticated && shikimoriId && (
+              <motion.div
+                className="shikimori-status-container"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                <div className="shikimori-status-label">
+                  <img 
+                    src="https://shikimori.one/favicons/favicon-16x16.png" 
+                    alt="Shikimori" 
+                    className="shikimori-icon"
+                  />
+                  Статус на Shikimori:
+                </div>
+                <div className="shikimori-status-buttons">
+                  {['planned', 'watching', 'completed', 'on_hold', 'dropped'].map((status) => (
+                    <motion.button
+                      key={status}
+                      className={`shikimori-status-button ${shikimoriStatus === status ? 'active' : ''}`}
+                      data-status={status}
+                      onClick={() => handleShikimoriStatusChange(status)}
+                      disabled={syncingShikimori}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {getStatusDisplayName(status)}
+                    </motion.button>
+                  ))}
+                </div>
               </motion.div>
             )}
           </div>
@@ -429,6 +519,16 @@ const AnimeDetails = ({ animeId, onWatchEpisode, onAnimeClick }) => {
                       <li>
                         <span className="detail-label">В избранном у:</span>
                         <span className="detail-value">{anime.added_in_users_favorites.toLocaleString()} пользователей</span>
+                      </li>
+                    )}
+                    {shikimoriId && (
+                      <li>
+                        <span className="detail-label">Shikimori ID:</span>
+                        <span className="detail-value">
+                          <a href={`https://shikimori.one/animes/${shikimoriId}`} target="_blank" rel="noreferrer">
+                            {shikimoriId}
+                          </a>
+                        </span>
                       </li>
                     )}
                   </ul>

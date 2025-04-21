@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fixImagePath } from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
+import { findUserRate, getStatusDisplayName } from '../../utils/shikimoriRates';
+import { getOrFindShikimoriId } from '../../utils/shikimoriMapping';
+import '../../styles/shikimori-integration.css';
 
 const AnimeCard = ({ anime, onClick, index, extraClass = '' }) => {
   const hasEpisodes = anime.episodes_total && anime.episodes_total > 0;
+  const { isAuthenticated, currentUser } = useAuth();
+  const [shikimoriStatus, setShikimoriStatus] = useState(null);
+  const [shikimoriId, setShikimoriId] = useState(null);
+  
+  useEffect(() => {
+    if (isAuthenticated && currentUser && anime?.id) {
+      const fetchShikimoriData = async () => {
+        try {
+          const settings = JSON.parse(localStorage.getItem('anilibria_shikimori_settings') || '{}');
+          
+          if (settings.showRatings) {
+            const id = await getOrFindShikimoriId(anime);
+            if (id) {
+              setShikimoriId(id);
+              const userRate = await findUserRate(currentUser.id, id);
+              if (userRate) {
+                setShikimoriStatus(userRate.status);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch Shikimori status:', error);
+        }
+      };
+      
+      fetchShikimoriData();
+    }
+  }, [anime, isAuthenticated, currentUser]);
   
   return (
     <motion.div 
@@ -24,6 +56,12 @@ const AnimeCard = ({ anime, onClick, index, extraClass = '' }) => {
         {anime.is_ongoing && <div className="anime-tag ongoing">Онгоинг</div>}
         {anime.season && <div className="anime-tag season">{anime.season.description}</div>}
         {hasEpisodes && <div className="anime-tag episodes">{anime.episodes_total} эп.</div>}
+        
+        {isAuthenticated && shikimoriStatus && (
+          <div className={`shikimori-status-tag ${shikimoriStatus}`}>
+            {getStatusDisplayName(shikimoriStatus)}
+          </div>
+        )}
       </div>
       
       <div className="anime-card-play-button">

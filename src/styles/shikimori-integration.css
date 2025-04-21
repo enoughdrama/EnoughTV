@@ -1,0 +1,297 @@
+.shikimori-status-container {
+    margin-top: 20px;
+    background-color: rgba(75, 106, 160, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shikimori-status-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.shikimori-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.shikimori-status-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.shikimori-status-button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.shikimori-status-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.shikimori-status-button.active {
+    background-color: #4b6aa0;
+    color: white;
+}
+
+.shikimori-status-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.shikimori-status-button.active[data-status="watching"],
+.shikimori-status-button.active[data-status="rewatching"] {
+    background-color: #4CAF50;
+}
+
+.shikimori-status-button.active[data-status="completed"] {
+    background-color: #2196F3;
+}
+
+.shikimori-status-button.active[data-status="on_hold"] {
+    background-color: #FF9800;
+}
+
+.shikimori-status-button.active[data-status="dropped"] {
+    background-color: #F44336;
+}
+
+.shikimori-status-button.active[data-status="planned"] {
+    background-color: #9C27B0;
+}
+
+.shikimori-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 4px;
+    background-color: rgba(75, 106, 160, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.shikimori-badge img {
+    width: 12px;
+    height: 12px;
+}
+
+.sync-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-top-color: #4b6aa0;
+    border-radius: 50%;
+    animation: sync-spin 1s linear infinite;
+}
+
+@keyframes sync-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.anime-card .shikimori-status-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: rgba(75, 106, 160, 0.8);
+    color: white;
+    z-index: 2;
+}
+
+.anime-card .shikimori-status-tag.watching {
+    background-color: rgba(76, 175, 80, 0.8);
+}
+
+.anime-card .shikimori-status-tag.completed {
+    background-color: rgba(33, 150, 243, 0.8);
+}
+
+.anime-card .shikimori-status-tag.on_hold {
+    background-color: rgba(255, 152, 0, 0.8);
+}
+
+.anime-card .shikimori-status-tag.dropped {
+    background-color: rgba(244, 67, 54, 0.8);
+}
+
+.anime-card .shikimori-status-tag.planned {
+    background-color: rgba(156, 39, 176, 0.8);
+}
+
+.shikimori-list-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.shikimori-list-tab {
+    padding: 10px 16px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.shikimori-list-tab:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.shikimori-list-tab.active {
+    background-color: #4b6aa0;
+    color: white;
+}
+
+.shikimori-list-tab.active[data-status="watching"] {
+    background-color: #4CAF50;
+}
+
+.shikimori-list-tab.active[data-status="completed"] {
+    background-color: #2196F3;
+}
+
+.shikimori-list-tab.active[data-status="on_hold"] {
+    background-color: #FF9800;
+}
+
+.shikimori-list-tab.active[data-status="dropped"] {
+    background-color: #F44336;
+}
+
+.shikimori-list-tab.active[data-status="planned"] {
+    background-color: #9C27B0;
+}
+
+.shikimori-card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 0 0 8px 8px;
+    margin-top: -8px;
+    position: relative;
+    z-index: 2;
+}
+
+.shikimori-anime-card {
+    margin-bottom: 0 !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.shikimori-card-progress {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.shikimori-episodes-watched {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.shikimori-card-score {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    color: #FFD700;
+}
+
+.shikimori-card-score svg {
+    width: 16px;
+    height: 16px;
+    color: #FFD700;
+}
+
+.shikimori-sync-status {
+    position: absolute;
+    bottom: 70px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.shikimori-sync-status:hover {
+    opacity: 1;
+}
+
+.shikimori-synced {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #4CAF50;
+}
+
+.shikimori-syncing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.shikimori-synced img {
+    width: 14px;
+    height: 14px;
+}
+
+@media (max-width: 768px) {
+    .shikimori-list-tabs {
+        overflow-x: auto;
+        padding-bottom: 10px;
+        flex-wrap: nowrap;
+    }
+
+    .shikimori-list-tab {
+        white-space: nowrap;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .shikimori-status-buttons {
+        flex-direction: column;
+    }
+
+    .shikimori-status-button {
+        width: 100%;
+    }
+}

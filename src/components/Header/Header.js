@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PAGES } from '../../utils/api';
 import { getRecentlyWatchedAnime } from '../../utils/watchHistory';
+import { useAuth } from '../../context/AuthContext'
 import '../../styles/header.css';
 
 const Header = ({ currentPage, navigateTo }) => {
@@ -12,6 +13,7 @@ const Header = ({ currentPage, navigateTo }) => {
   const [hasContinueWatching, setHasContinueWatching] = useState(false);
   const searchInputRef = useRef(null);
   const headerRef = useRef(null);
+  const { isAuthenticated, currentUser } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -125,6 +127,12 @@ const Header = ({ currentPage, navigateTo }) => {
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        );
+      case 'user':
+        return (
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         );
       default:
@@ -274,6 +282,24 @@ const Header = ({ currentPage, navigateTo }) => {
             </motion.div>
 
             <motion.button
+              className={`profile-button ${'active'}`}
+              onClick={() => navigateTo(PAGES.PROFILE)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {isAuthenticated && currentUser ? (
+                <div className="user-avatar">
+                  <img 
+                    src={currentUser.avatar || "https://shikimori.one/favicons/favicon-32x32.png"} 
+                    alt={currentUser.nickname} 
+                  />
+                </div>
+              ) : (
+                <span className="profile-icon">{getIconSvg('user')}</span>
+              )}
+            </motion.button>
+
+            <motion.button
               className="mobile-menu-toggle"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               whileHover={{ scale: 1.05 }}
@@ -294,7 +320,7 @@ const Header = ({ currentPage, navigateTo }) => {
             animate="open"
             exit="closed"
           >
-            {navItems.map((item) => (
+            {[...navItems, { id: PAGES.PROFILE, label: 'Профиль', icon: 'user' }].map((item) => (
               <motion.button
                 key={item.id}
                 className={`mobile-nav-item ${currentPage === item.id ? 'active' : ''}`}
