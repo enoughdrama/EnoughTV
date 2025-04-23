@@ -1,7 +1,7 @@
 const SHIKIMORI_BASE_URL = 'https://shikimori.one';
 const SHIKIMORI_API_URL = 'https://shikimori.one/api';
-const SHIKIMORI_CLIENT_ID = 'svlcpsQeaK8J5FqyXpoA5jzX9fh_eFIL_Vz1kHyII-c';
-const SHIKIMORI_CLIENT_SECRET = 'tetxbbbXl4VU5H7WZZEoLPCjcCfHaSfvrFpFs4j-hw0';
+const SHIKIMORI_CLIENT_ID = '';
+const SHIKIMORI_CLIENT_SECRET = '';
 const REDIRECT_URI = `${window.location.origin}/auth/callback`;
 
 const AUTH_STORAGE_KEY = 'enoughtv_shikimori_auth';
