@@ -1,0 +1,91 @@
+.breadcrumbs-container {
+    width: 100%;
+    padding: 0.5rem 1.5rem;
+    background-color: rgba(30, 30, 40, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 50;
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.breadcrumb:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.breadcrumb.active {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    cursor: default;
+}
+
+.breadcrumb.active:hover {
+    background-color: transparent;
+}
+
+.breadcrumb-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+}
+
+.breadcrumb-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.breadcrumb-separator {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.breadcrumb-separator svg {
+    width: 12px;
+    height: 12px;
+}
+
+@media (max-width: 768px) {
+    .breadcrumbs-container {
+        padding: 0.5rem 1rem;
+    }
+
+    .breadcrumb {
+        max-width: 120px;
+        font-size: 0.75rem;
+    }
+
+    .breadcrumb-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .breadcrumb-separator svg {
+        width: 10px;
+        height: 10px;
+    }
+}

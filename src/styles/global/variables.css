@@ -1,0 +1,84 @@
+:root {
+  --primary-color: #6366f1;
+  --primary-dark: #332f7f;
+  --primary-light: #46428a;
+  --accent-color: #6366f1;
+  --accent-dark: #332f7f;
+  --accent-light: #332f7f;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --info-color: #46428a;
+
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #121212;
+  --gray-900: #000000;
+  --gray-950: #030712;
+
+  --background-color: #000000;
+  --card-color: #121212;
+  --text-color: #ffffff;
+  --text-color-secondary: #b0b0b0;
+  --text-color-tertiary: #808080;
+  --border-color: #333333;
+  --spacing-4: 0.25rem;
+  --spacing-8: 0.5rem;
+  --spacing-12: 0.75rem;
+  --spacing-16: 1rem;
+  --transition-speed: 0.3s;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.9);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.9), 0 2px 4px -1px rgba(0, 0, 0, 0.9);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.9), 0 4px 6px -2px rgba(0, 0, 0, 0.9);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.9), 0 10px 10px -5px rgba(0, 0, 0, 0.9);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.9);
+
+  --glass-background: rgba(18, 18, 18, 0.8);
+  --glass-background-dark: rgba(10, 10, 10, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-dark: rgba(255, 255, 255, 0.05);
+
+  --animation-slow: 0.5s;
+  --animation-default: 0.3s;
+  --animation-fast: 0.15s;
+
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  --font-heading: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  --header-height: 64px;
+  --content-width: 1280px;
+  --container-padding: 16px;
+
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-modal: 40;
+  --z-popup: 50;
+  --z-tooltip: 60;
+}

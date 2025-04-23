@@ -1,0 +1,96 @@
+.tabs-container {
+    margin-bottom: var(--spacing-6);
+    position: relative;
+}
+
+.tabs {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: var(--spacing-2);
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    transition: all var(--animation-fast) ease;
+    white-space: nowrap;
+}
+
+.tab:hover:not(.active) {
+    background-color: #1a1a1a;
+}
+
+.tab.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.tab-content {
+    background-color: var(--card-color);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-6);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-8);
+}
+
+.results-count {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.skeleton-grid {
+    min-height: 400px;
+}
+
+.empty-state-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: rgba(99, 102, 241, 0.1);
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-6);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+}
+
+.empty-state-icon svg {
+    width: 50px;
+    height: 50px;
+}
+
+.empty-state-hint {
+    color: var(--text-color-secondary);
+    max-width: 500px;
+    margin: 0 auto var(--spacing-8) auto;
+    font-size: 1.125rem;
+}
+
+.retry-button {
+    display: inline-flex;
+    padding: var(--spacing-3) var(--spacing-6);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+}
+
+.retry-button svg {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--spacing-3);
+}
+
+.retry-button:hover {
+    background-color: rgba(99, 102, 241, 0.1);
+}

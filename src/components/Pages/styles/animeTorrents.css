@@ -1,0 +1,356 @@
+.torrents-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.torrents-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4);
+    background-color: rgba(30, 30, 40, 0.3);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    position: relative;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+}
+
+.filter-select {
+    padding: var(--spacing-2) var(--spacing-4) var(--spacing-2) var(--spacing-3);
+    background-color: rgba(20, 20, 30, 0.6);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    outline: none;
+    min-width: 140px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
+.filter-select:hover {
+    border-color: rgba(99, 102, 241, 0.5);
+    background-color: rgba(30, 30, 50, 0.7);
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.1);
+}
+
+.filter-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* Custom styling for dropdown options */
+.filter-select option {
+    background-color: rgba(20, 20, 30, 0.95);
+    color: var(--text-color);
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
+.torrents-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.torrent-card {
+    background-color: rgba(30, 30, 40, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.torrent-card:hover {
+    background-color: rgba(40, 40, 50, 0.35);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.torrent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+}
+
+.torrent-title {
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text-color);
+    word-break: break-word;
+}
+
+.torrent-quality {
+    display: flex;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+}
+
+.quality-badge,
+.type-badge {
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.quality-badge {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(79, 82, 231, 0.8));
+    color: white;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+}
+
+.type-badge {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(37, 99, 235, 0.8));
+    color: white;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.torrent-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-3);
+    align-items: center;
+}
+
+.torrent-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.torrent-info-row {
+    display: flex;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.size-badge {
+    background-color: rgba(45, 45, 60, 0.5);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.description-badge {
+    background-color: rgba(45, 45, 60, 0.4);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+}
+
+.torrent-codecs {
+    display: flex;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+}
+
+.codec-badge,
+.color-badge,
+.bitrate-badge {
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+    background-color: rgba(45, 45, 60, 0.3);
+}
+
+.torrent-stats-container {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-1) var(--spacing-2);
+    background-color: rgba(25, 25, 35, 0.4);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.torrent-stats {
+    display: flex;
+    gap: var(--spacing-3);
+    align-items: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.stat-item svg {
+    width: 16px;
+    height: 16px;
+}
+
+.seeders {
+    color: #4ade80;
+    /* Green color for seeders */
+}
+
+.leechers {
+    color: #f87171;
+    /* Red color for leechers */
+}
+
+.completed {
+    color: #60a5fa;
+    /* Blue color for completed */
+}
+
+.torrent-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--spacing-2);
+}
+
+.torrent-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+}
+
+.magnet-button {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(79, 82, 231, 0.9));
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+}
+
+.magnet-button:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(79, 82, 231, 1));
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
+}
+
+.torrent-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.torrents-empty-state,
+.torrents-no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-8);
+    text-align: center;
+    color: var(--text-color-secondary);
+}
+
+.torrents-empty-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: var(--spacing-4);
+    opacity: 0.6;
+}
+
+.torrents-empty-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.torrents-loading .skeleton-line,
+.torrents-loading .skeleton-card {
+    background-color: var(--border-color);
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.torrents-loading .skeleton-card {
+    margin-bottom: var(--spacing-4);
+}
+
+.torrents-loading .skeleton-card::after,
+.torrents-loading .skeleton-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 1.5s infinite linear;
+    transform: translateX(-100%);
+}
+
+@media (max-width: 768px) {
+    .torrent-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-3);
+    }
+
+    .torrent-stats-container {
+        width: 100%;
+    }
+
+    .torrents-filters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .torrent-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .torrent-quality {
+        margin-top: var(--spacing-1);
+    }
+
+    .torrent-actions {
+        justify-content: center;
+    }
+
+    .torrent-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

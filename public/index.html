@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="EnoughTV - Premium anime streaming platform with the latest shows and classics" />
+  <meta name="keywords" content="anime, streaming, EnoughTV, watch anime, anime series, anime movies" />
+  <meta name="author" content="EnoughTV" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://watch.enoughdrama.me/" />
+  <meta property="og:title" content="EnoughTV - Anime Streaming Platform" />
+  <meta property="og:description"
+    content="Stream your favorite anime shows and movies in HD quality. New releases and classics available." />
+  <meta property="og:image" content="/logo192.png" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://watch.enoughdrama.me/" />
+  <meta property="twitter:title" content="EnoughTV - Anime Streaming Platform" />
+  <meta property="twitter:description"
+    content="Stream your favorite anime shows and movies in HD quality. New releases and classics available." />
+  <meta property="twitter:image" content="/logo192.png" />
+
+  <link rel="apple-touch-icon" href="/logo192.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="canonical" href="https://watch.enoughdrama.me/" />
+  <title>EnoughTV - Anime Streaming Platform</title>
+
+  <style>
+    body {
+      color: #f8fafc;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #0f172a;
+    }
+
+    .loader-container {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--bg-color);
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+
+    .loader-container.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-logo-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin-bottom: 2rem;
+      transform-style: preserve-3d;
+      animation: loader-logo-float 3s ease-in-out infinite;
+    }
+
+    @keyframes loader-logo-float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotateY(0);
+      }
+
+      50% {
+        transform: translateY(-20px) rotateY(10deg);
+      }
+    }
+
+    .loader-logo {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url('/logo192.png');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: drop-shadow(0 0 15px #6366f1);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        filter: drop-shadow(0 0 15px #6366f1);
+      }
+
+      50% {
+        filter: drop-shadow(0 0 25px #ec4899);
+      }
+
+      100% {
+        filter: drop-shadow(0 0 15px #6366f1);
+      }
+    }
+
+    .loader-elements {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader-element {
+      width: 20px;
+      height: 20px;
+      margin: 0 5px;
+      border-radius: 50%;
+      background: #6366f1;
+      animation: loader-bounce 1.4s ease-in-out infinite;
+    }
+
+    .loader-element:nth-child(1) {
+      animation-delay: -0.32s;
+      background: #6366f1;
+    }
+
+    .loader-element:nth-child(2) {
+      animation-delay: -0.16s;
+      background: #8b5cf6;
+    }
+
+    .loader-element:nth-child(3) {
+      background: #ec4899;
+    }
+
+    @keyframes loader-bounce {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+      }
+
+      40% {
+        transform: scale(1);
+      }
+    }
+
+    .loader-category-loader {
+      margin-top: 3rem;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .loader-category-title {
+      width: 40%;
+      height: 24px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%);
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      animation: shimmer 2s infinite linear;
+    }
+
+    .loader-category-items {
+      display: flex;
+      overflow: hidden;
+    }
+
+    .loader-category-item {
+      flex: 0 0 150px;
+      height: 220px;
+      margin-right: 1rem;
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 100%);
+      position: relative;
+      overflow: hidden;
+      animation: shimmer 2s infinite linear;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -500px 0;
+      }
+
+      100% {
+        background-position: 500px 0;
+      }
+    }
+
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 0.8s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    #root {
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+    }
+
+    #root.loaded {
+      opacity: 1;
+    }
+
+    /* Disclaimer Styles */
+    .disclaimer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .disclaimer-container {
+      background-color: #1e293b;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .disclaimer-header {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .disclaimer-header h2 {
+      margin: 0;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .disclaimer-content {
+      padding: 1.5rem;
+      max-height: 50vh;
+      overflow-y: auto;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    .disclaimer-content h3 {
+      color: #f8fafc;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+    }
+
+    .disclaimer-content p {
+      margin-bottom: 1rem;
+    }
+
+    .disclaimer-actions {
+      display: flex;
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      justify-content: space-between;
+    }
+
+    .disclaimer-button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .disclaimer-button.decline {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+    }
+
+    .disclaimer-button.decline:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .disclaimer-button.accept {
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      color: white;
+    }
+
+    .disclaimer-button.accept:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "EnoughTV",
+    "applicationloader-category": "EntertainmentApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Premium anime streaming platform with the latest shows and classics"
+  }
+</script>
+
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+    (function (m, e, t, r, i, k, a) {
+      m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+      m[i].l = 1 * new Date();
+      for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+      k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+    })
+      (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    ym(100297737, "init", {
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true,
+      webvisor: true
+    });
+  </script>
+  <noscript>
+    <div><img src="https://mc.yandex.ru/watch/100297737" style="position:absolute; left:-9999px;" alt="" /></div>
+  </noscript>
+  <!-- /Yandex.Metrika counter -->
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+
+  <!-- Terms of Use Disclaimer -->
+  <div class="disclaimer-overlay" id="disclaimerOverlay" style="display: none;">
+    <div class="disclaimer-container">
+      <div class="disclaimer-header">
+        <h2>Terms of Use Agreement</h2>
+      </div>
+      <div class="disclaimer-content">
+        <p>Welcome to EnoughTV. If you have accessed this platform by accident, you may leave at any time. By continuing
+          to use this platform, you agree to the following terms and conditions:</p>
+
+        <h3>1. Disclaimer of Responsibility</h3>
+        <p>This is a non-commercial project. The creator of EnoughTV does not assume any responsibility or liability for
+          any information, content, materials, or services available on or through this platform. All content is
+          streamed from external servers including but not limited to AniLibria and/or Shikimori.</p>
+
+        <h3>2. Content Disclaimer</h3>
+        <p>The content accessible through this platform is not hosted on our servers. We do not upload, control, or
+          modify any of the content made available. The platform merely functions as an index of content hosted
+          elsewhere.</p>
+
+        <h3>3. Copyright Notice</h3>
+        <p>All copyrights, trademarks, and other intellectual property rights related to the content accessible through
+          this platform belong to their respective owners. EnoughTV does not claim ownership of any such content.</p>
+
+        <h3>4. Limitation of Liability</h3>
+        <p>Under no circumstances shall the creator of EnoughTV be liable for any direct, indirect, incidental, special,
+          or consequential damages arising out of or in any way connected with the use of this platform.</p>
+
+        <h3>5. User Responsibility</h3>
+        <p>By using this platform, you acknowledge that you are solely responsible for your actions while using EnoughTV
+          and for ensuring that your use complies with all applicable laws and regulations.</p>
+
+        <h3>6. Terms Modification</h3>
+        <p>These terms may be modified at any time without prior notice. Your continued use of the platform following
+          any changes constitutes your acceptance of such changes.</p>
+      </div>
+      <div class="disclaimer-actions">
+        <button class="disclaimer-button decline" id="declineButton">Decline & Leave</button>
+        <button class="disclaimer-button accept" id="acceptButton">Accept & Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loader-container" id="loaderContainer">
+    <div class="loader-logo-container">
+      <div class="loader-logo"></div>
+    </div>
+    <div class="loader-elements">
+      <div class="loader-element"></div>
+      <div class="loader-element"></div>
+      <div class="loader-element"></div>
+    </div>
+
+    <div class="loader-category-loader fade-in" style="animation-delay: 0.3s">
+      <div class="loader-category-title"></div>
+      <div class="loader-category-items">
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+      </div>
+    </div>
+
+    <div class="loader-category-loader fade-in" style="animation-delay: 0.6s">
+      <div class="loader-category-title"></div>
+      <div class="loader-category-items">
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+        <div class="loader-category-item"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="root"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const disclaimerOverlay = document.getElementById('disclaimerOverlay');
+      const acceptButton = document.getElementById('acceptButton');
+      const declineButton = document.getElementById('declineButton');
+      const loaderContainer = document.getElementById('loaderContainer');
+      const rootElement = document.getElementById('root');
+
+      // Check if user has already accepted the terms
+      const hasAcceptedTerms = localStorage.getItem('enoughtv_terms_accepted');
+
+      // Check if this is user's first visit
+      if (hasAcceptedTerms !== 'true') {
+        // Show the disclaimer overlay if it's their first visit
+        disclaimerOverlay.style.display = 'flex';
+        disclaimerOverlay.style.opacity = '1';
+      } else {
+        // If user has already accepted, skip the disclaimer and continue loading
+        startAppLoading();
+      }
+
+      // Accept button click handler
+      acceptButton.addEventListener('click', function () {
+        // Save acceptance to localStorage
+        localStorage.setItem('enoughtv_terms_accepted', 'true');
+
+        // Hide disclaimer with animation
+        disclaimerOverlay.style.opacity = '0';
+        setTimeout(function () {
+          disclaimerOverlay.style.display = 'none';
+          startAppLoading();
+        }, 500);
+      });
+
+      // Decline button click handler
+      declineButton.addEventListener('click', function () {
+        // Redirect to google or history back
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = "https://www.google.com";
+        }
+      });
+
+      function startAppLoading() {
+        if (loaderContainer && rootElement) {
+          // Show loader first
+          loaderContainer.classList.remove('hidden');
+
+          // Then after a short delay, hide loader and show application
+          setTimeout(function () {
+            loaderContainer.classList.add('hidden');
+            rootElement.classList.add('loaded');
+
+            setTimeout(function () {
+              loaderContainer.remove();
+            }, 500);
+          }, 1000);
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
